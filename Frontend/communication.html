@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Communication Assessment - Prepmate AI</title>
+  
+  <script src="face-api.min.js"></script>
+  
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="practice-tool.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-brand">Prepmate AI</div>
+    <ul class="nav-links" id="nav-links-list">
+  </ul>
+  </nav>
+
+  <main class="content">
+    <div class="container">
+      
+      <div id="setup-screen">
+        <h1>1-Minute Communication Assessment</h1>
+        <p>You will be given a random topic. You will have 15 seconds to prepare and then 60 seconds to speak.</p>
+        <p>Your voice, gaze, and facial expressions will be analyzed. Good luck!</p>
+        <div id="model-status">Loading AI Face Models...</div>
+        <button id="start-btn" class="tool-button-primary" disabled>Start Challenge</button>
+      </div>
+
+      <div id="practice-screen" class="hidden">
+        <h2 id="status-text">Prepare...</h2>
+        <div class="stats-bar" style="justify-content: center;">
+            <div id="timer-text" style="font-size: 1.5rem;">Time Left: 15s</div>
+        </div>
+
+        <div class="question-box" id="topic-box">
+          Your topic will appear here...
+        </div>
+        
+        <div class="video-container" id="video-container">
+          <video id="user-video" width="400" height="300" autoplay muted></video>
+        </div>
+        
+        <div class="audio-controls">
+          <button id="stop-btn" class="tool-button-danger" disabled>Stop Recording</button>
+        </div>
+
+        <button id="feedback-btn" class="tool-button-primary" disabled>Submit for Feedback</button>
+      </div>
+
+      <div id="feedback-screen" class="hidden">
+        <h2>Your Report</h2>
+        <div class="response-box" id="feedback-report">
+          Generating your feedback...
+        </div>
+        <button id="restart-btn" class="tool-button-primary">Try Another Topic</button>
+      </div>
+      
+      <div id="loading-spinner" class="spinner-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p id="spinner-text">Loading...</p> 
+      </div>
+
+    </div>
+  </main>
+  
+  <script src="communication.js"></script>
+  <script src="auth.js"></script>
+  
+</body>
+</html>

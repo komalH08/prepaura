@@ -1,0 +1,103 @@
+/* --- Managerial Round Chat Styles --- */
+
+#chat-container {
+    width: 100%;
+    height: 400px; /* Increased height */
+    overflow-y: auto; /* Allow scrolling */
+    background: #111827; /* Darkest background */
+    border: 1px solid #374151; /* Dark border */
+    border-radius: 8px;
+    padding: 15px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column; /* Stack messages */
+    gap: 12px;
+}
+
+.chat-bubble {
+    padding: 12px 18px;
+    border-radius: 20px;
+    max-width: 80%;
+    word-wrap: break-word;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.chat-bubble.ai {
+    background-color: #374151; /* Dark grey bubble */
+    color: #E5E7EB; /* Light text */
+    border-bottom-left-radius: 5px;
+    align-self: flex-start; /* AI bubbles on the left */
+    text-align: left;
+}
+
+.chat-bubble.user {
+    background: linear-gradient(90deg, #0e81b6, #4c4ee4); /* User accent bubble */
+    color: white;
+    border-bottom-right-radius: 5px;
+    align-self: flex-end; /* User bubbles on the right */
+    text-align: left;
+}
+
+.chat-bubble strong {
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 4px;
+    color: #9CA3AF; /* Lighter grey for role */
+}
+
+.chat-bubble.user strong {
+    color: #E5E7EB;
+}
+
+/* --- Typing Indicator --- */
+#typing-indicator {
+    /* 'display: flex' is now controlled by the rule below */
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 15px;
+    margin-bottom: 20px;
+}
+
+#typing-indicator:not(.hidden) {
+    display: flex;
+}
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #9CA3AF; /* Lighter dots */
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 1px;
+    animation: typing-bounce 1.3s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: -1.1s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: -0.9s;
+}
+
+@keyframes typing-bounce {
+    0%, 60%, 100% {
+        transform: translateY(0);
+    }
+    30% {
+        transform: translateY(-4px);
+    }
+}
+
+/* --- Mute Button --- */
+.voice-controls {
+    text-align: center;
+    margin-bottom: 10px;
+}
+.voice-controls button {
+    width: auto;
+    font-size: 0.9rem;
+    padding: 8px 15px;
+}

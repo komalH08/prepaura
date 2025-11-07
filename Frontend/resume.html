@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume Interview - Prepmate AI</title>
+  
+  <script src="face-api.min.js"></script>
+  
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="practice-tool.css" />
+  <link rel="stylesheet" href="managerial.css" /> </head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-brand">Prepmate AI</div>
+    <ul class="nav-links" id="nav-links-list">
+  </ul>
+  </nav>
+
+  <main class="content">
+    <div class="container">
+      
+      <div id="upload-screen">
+        <h1>Resume-Based Interview</h1>
+        <p>This is a 6-question live interview about your resume. Upload your resume (PDF) to begin.</p>
+        
+        <div class="resume-uploader" style="text-align: center; border-style: solid; padding: 20px;">
+          <label for="resume-upload">Upload Your Resume (PDF):</label>
+          <input type="file" id="resume-upload" accept=".pdf" />
+          <button id="upload-btn" class="tool-button-primary" style="width: auto; margin-top: 15px;">Upload</button>
+          <span id="resume-status"></span>
+        </div>
+      </div>
+
+      <div id="interview-screen" class="hidden">
+        
+        <div id="chat-container">
+          </div>
+
+        <div id="typing-indicator" class="hidden">
+          <div class="chat-bubble ai">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
+        
+        <div class="video-container" id="video-container">
+          <video id="user-video" width="400" height="300" autoplay muted></video>
+        </div>
+        
+        <div class="voice-controls">
+          <button id="mute-btn" class="tool-button-secondary">🔇 Mute Voice</button>
+        </div>
+        
+        <div class="audio-controls">
+          <button id="record-button" disabled>🎙️ Record Answer</button>
+          <button id="stop-button" disabled>⏹️ Stop Recording</button>
+          <span id="record-status"></span>
+        </div>
+      </div>
+
+      <div id="feedback-screen" class="hidden">
+        <h2>Resume Interview: Final Debrief</h2>
+        <div class="response-box" id="feedback-report">
+          Generating your final report...
+        </div>
+        <a href="practice.html" class="tool-button-primary">Back to Practice Hub</a>
+      </div>
+      
+      <div id="loading-spinner" class="spinner-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p id="spinner-text">Loading...</p> 
+      </div>
+
+    </div>
+  </main>
+  
+  <script src="resume.js"></script>
+  <script src="auth.js"></script>
+  
+</body>
+</html>

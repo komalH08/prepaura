@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Technical Practice - Prepmate AI</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="practice-tool.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/editor/editor.main.min.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-brand">Prepmate AI</div>
+    <ul class="nav-links" id="nav-links-list">
+  </ul>
+  </nav>
+
+  <main class="content">
+    <div class="container">
+      
+      <div id="setup-screen">
+        <h1>Technical Coding Practice</h1>
+        <p>Select your language and topic to begin.</p>
+        
+        <div class="setup-row">
+            <select id="language-select" class="tool-select">
+              <option value="python">Python</option>
+              <option value="java">Java</option>
+            </select>
+            
+            <select id="technical-topic" class="tool-select">
+              <option value="Basic">Basic</option>
+              <option value="Data Structures (Arrays, Strings)">DSA: Arrays & Strings</option>
+              <option value="Data Structures (Linked Lists)">DSA: Linked Lists</option>
+              <option value="Data Structures (Trees, Graphs)">DSA: Trees & Graphs</option>
+              <option value="Algorithms (Sorting, Searching)">DSA: Sorting & Searching</option>
+              <option value="Mix (DSA)">Mix (All DSA Topics)</option>
+            </select>
+        </div>
+        
+        <button id="start-btn" class="tool-button-primary">Start Practice</button>
+      </div>
+
+      <div id="practice-screen" class="hidden">
+        <div class="stats-bar">
+          <div id="question-counter">Question: 1</div>
+          <div id="question-topic">Topic: ...</div>
+          <div id="question-timer">Time: 0s</div>
+        </div>
+        
+        <div class="question-box" id="question-text"></div>
+        
+        <div class="run-code-row">
+            <label class="editor-label" id="editor-label">Your Code (Python 3):</label>
+            <button id="run-code-btn" class="tool-button-solution">Run Code</button>
+        </div>
+
+        <div id="code-editor-container"></div>
+        
+        <label class="editor-label">Output:</label>
+        <div id="output-box" class="solution-box">
+          Click "Run Code" to see your test case results...
+        </div>
+
+        <!-- ✅ Green Solution Button -->
+        <div class="solution-button-row">
+          <button id="solution-btn" class="tool-button-success">Show Solution</button>
+        </div>
+
+        <!-- ✅ Hidden solution container -->
+        <pre id="solution-box" class="solution-box hidden"></pre>
+
+        <div class="nav-button-row">
+          <button id="next-btn" class="tool-button-primary">Next Question</button>
+        </div>
+        
+        <div class="button-row">
+          <button id="end-btn" class="tool-button-danger">End Practice</button>
+        </div>
+      </div>
+
+      <div id="loading-spinner" class="spinner-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Cooking up a new problem...</p>
+      </div>
+      
+      <div id="running-spinner" class="spinner-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Compiling & Running Code...</p>
+      </div>
+
+    </div>
+  </main>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+  <script src="technical.js"></script>
+  <script src="auth.js"></script>
+  
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mock Test - Prepmate AI</title>
+  <script src="face-api.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="practice-tool.css" />
+  <link rel="stylesheet" href="managerial.css" /> 
+  <link rel="stylesheet" href="mock_test.css" /> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/editor/editor.main.min.css" />
+</head>
+<body>
+
+  <nav class="navbar" id="main-navbar">
+    <div class="nav-brand">Prepmate AI</div>
+    <ul class="nav-links" id="nav-links-list">
+  </ul>
+  </nav>
+
+  <main class="content" id="mock-test-container">
+    <div class="container">
+
+      <div id="setup-screen">
+        <h1>Final Mock Test</h1>
+        <p>This is a full-length, proctored mock test that simulates a real company assessment in 4 rounds. The test will run in fullscreen, and switching tabs is not allowed.</p>
+        
+        <div class="setup-grid">
+          <div class="resume-uploader" style="text-align: center; border-style: solid; padding: 20px;">
+            <label for="resume-upload">**Step 1:** Upload Your Resume (PDF)</label>
+            <input type="file" id="resume-upload" accept=".pdf" />
+            <button id="upload-btn" class="tool-button-primary" style="width: auto; margin-top: 15px;">Upload</button>
+            <button id="skip-resume-btn" class="tool-button-secondary" style="width: auto; margin-top: 15px;">Skip</button>
+            <span id="resume-status"></span>
+          </div>
+
+          <div class="language-select-box">
+            <label for="language-select">**Step 2:** Select Coding Language</label>
+            <select id="language-select" class="tool-select" style="width: 100%; margin: 10px 0;">
+              <option value="python">Python</option>
+              <option value="java">Java</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="start-test-btn" class="tool-button-primary" disabled>Start Mock Test</button>
+      </div>
+
+      <div id="ready-screen" class="hidden">
+        <h1>Test Structure</h1>
+        <p>Your mock test consists of 4 rounds and will begin in fullscreen. You cannot pause. Leaving the tab 3 times will end the test.</p>
+        <ul class="round-list">
+          <li>**Round 1:** Aptitude Test (20 Qs, 30 Mins)</li>
+          <li>**Round 2:** Communication Test (1 Min)</li>
+          <li>**Round 3:** Coding Test (2 Qs, 45 Mins)</li>
+          <li>**Round 4:** Live Interview (6 Qs)</li>
+        </ul>
+        <button id="begin-test-btn" class="tool-button-primary">Begin Test Now</button>
+      </div>
+
+
+      <div id="test-environment" class="hidden">
+        
+        <div class="proctor-header">
+          <div class="proctor-info">
+            <strong>Round:</strong> <span id="round-name">Aptitude</span>
+          </div>
+          <div class="proctor-timer">
+            <strong>Time Left:</strong> <span id="master-timer">30:00</span>
+          </div>
+          <div class="proctor-warnings">
+            <strong>Warnings:</strong> <span id="warning-count">0 / 3</span>
+          </div>
+        </div>
+
+        <div id="round-content">
+          </div>
+
+      </div>
+      
+      <div id="report-screen" class="hidden">
+        <h1>Mock Test Final Report</h1>
+        <div class="response-box" id="final-report-box">
+          Generating your comprehensive report...
+        </div>
+        <a href="index.html" class="tool-button-primary">Back to Home</a>
+      </div>
+
+    </div>
+  </main>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+  <script src="mock_test.js"></script>
+  <script src="auth.js"></script>
+  
+</body>
+</html>

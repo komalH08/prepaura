@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aptitude Practice - Prepmate AI</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="practice-tool.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-brand">Prepmate AI</div>
+    <ul class="nav-links" id="nav-links-list">
+  </ul>
+  </nav>
+
+  <main class="content">
+    <div class="container">
+      
+      <div id="setup-screen">
+        <h1>Aptitude Practice</h1>
+        <p>Select a topic to begin your practice session.</p>
+        <select id="aptitude-topic" class="tool-select">
+          <option value="Quantitative Aptitude">Quantitative Aptitude</option>
+          <option value="Logical Reasoning">Logical Reasoning</option>
+          <option value="Verbal Ability">Verbal Ability</option>
+          <option value="Data Interpretation">Data Interpretation</option>
+          <option value="Mix">Mix (All Topics)</option>
+        </select>
+        <button id="start-btn" class="tool-button-primary">Start Practice</button>
+      </div>
+
+      <div id="practice-screen" class="hidden">
+        <div class="stats-bar">
+          <div id="question-counter">Question: 1</div>
+          <div id="question-topic">Topic: ...</div>
+          <div id="question-timer">Time: 0s</div>
+        </div>
+        
+        <div class="question-box" id="question-text">
+          Loading question...
+        </div>
+        
+        <div class="options-grid" id="options-grid">
+          </div>
+        
+        <div class="nav-button-row">
+          <button id="submit-btn" class="tool-button">Submit</button>
+          <button id="next-btn" class="tool-button-primary hidden">Next Question</button>
+        </div>
+        
+        <div class="solution-button-row">
+          <button id="solution-btn" class="tool-button-solution hidden">Show Solution</button>
+        </div>
+        
+        <div class="solution-box hidden" id="solution-box">
+          </div>
+        
+        <div class="button-row">
+          <button id="end-btn" class="tool-button-danger">End Practice</button>
+        </div>
+      </div>
+
+      <div id="feedback-screen" class="hidden">
+        <h2>Practice Report</h2>
+        <div class="response-box" id="feedback-report">
+          Generating your feedback...
+        </div>
+        <button id="restart-btn" class="tool-button-primary">Practice Again</button>
+      </div>
+      
+      <div id="loading-spinner" class="spinner-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Cooking questions for you...</p>
+      </div>
+
+    </div>
+  </main>
+  
+  <script src="aptitude.js"></script>
+  <script src="auth.js"></script>
+  
+</body>
+</html>

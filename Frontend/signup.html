@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up - Prepmate AI</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="practice-tool.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-brand">Prepmate AI</div>
+    <ul class="nav-links">
+      <li><a href="home.html">Home</a></li>
+      <li><a href="practice.html">Practice Hub</a></li>
+      <li><a href="mock_test.html">Mock Test</a></li>
+    </ul>
+  </nav>
+
+  <main class="content">
+    <div class="container" style="max-width: 500px;">
+      <h1>Create Your Account</h1>
+      
+      <form id="signup-form" style="text-align: left;">
+        
+        <label for="username" class="editor-label">Username</label>
+        <input type="text" id="username" class="tool-select" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;" required>
+
+        <label for="email" class="editor-label">Email</label>
+        <input type="email" id="email" class="tool-select" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;" required>
+        
+        <label for="password" class="editor-label">Password</label>
+        <input type="password" id="password" class="tool-select" style="width: 100%; box-sizing: border-box; margin-bottom: 20px;" required>
+        
+        <div id="message" style="margin-bottom: 15px; text-align: center; display: none;"></div>
+        
+        <button type="submit" id="signup-button" class="tool-button-primary" style="width: 100%;">Create Account</button>
+      
+      </form>
+      
+      <div style="text-align: center; margin-top: 20px;">
+        <p>Already have an account? <a href="login.html" style="color: #38BDF8; text-decoration: none;">Login</a></p>
+      </div>
+    </div>
+  </main>
+  
+  <script src="signup.js"></script>
+</body>
+</html>

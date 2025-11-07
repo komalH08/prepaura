@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HR Interview - Prepmate AI</title>
+  
+  <script src="face-api.min.js"></script>
+  
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="practice-tool.css" />
+  <link rel="stylesheet" href="managerial.css" /> 
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-brand">Prepmate AI</div>
+    <ul class="nav-links" id="nav-links-list">
+  </ul>
+  </nav>
+
+  <main class="content">
+    <div class="container">
+      
+      <div id="setup-screen">
+        <h1>HR Personal Interview</h1>
+        <p>This is a 4-question live interview simulation with Prepmate. This round focuses on behavioral and personal-fit questions.</p>
+        <p>Prepmate will ask a question, then a smart follow-up. You will receive a full report at the end. Good luck.</p>
+        <div id="model-status">Loading AI Face Models...</div>
+        <button id="start-btn" class="tool-button-primary" disabled>Begin Interview</button>
+      </div>
+
+      <div id="interview-screen" class="hidden">
+        
+        <div id="chat-container">
+          </div>
+
+        <div id="typing-indicator" class="hidden">
+          <div class="chat-bubble ai">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
+        
+        <div class="video-container" id="video-container">
+          <video id="user-video" width="400" height="300" autoplay muted></video>
+        </div>
+        
+        <div class="voice-controls">
+          <button id="mute-btn" class="tool-button-secondary">🔇 Mute Voice</button>
+        </div>
+        
+        <div class="audio-controls">
+          <button id="record-button" disabled>🎙️ Record Answer</button>
+          <button id="stop-button" disabled>⏹️ Stop Recording</button>
+          <span id="record-status"></span>
+        </div>
+      </div>
+
+      <div id="feedback-screen" class="hidden">
+        <h2>HR Interview: Final Debrief</h2>
+        <div class="response-box" id="feedback-report">
+          Generating your final report...
+        </div>
+        <a href="practice.html" class="tool-button-primary">Back to Practice Hub</a>
+      </div>
+      
+      <div id="loading-spinner" class="spinner-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p id="spinner-text">Loading...</p> 
+      </div>
+
+    </div>
+  </main>
+  
+  <script src="hr.js"></script>
+  <script src="auth.js"></script>
+  
+</body>
+</html>

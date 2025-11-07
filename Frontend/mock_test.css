@@ -1,0 +1,99 @@
+/* --- Mock Test Shell Styles --- */
+
+#mock-test-container .container {
+    max-width: 1000px; /* Wider container for the test */
+}
+
+#test-environment {
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+    width: 100%;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.proctor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1c2536;
+    color: white;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box; /* Include padding in width */
+    z-index: 1000;
+}
+
+.proctor-info, .proctor-timer, .proctor-warnings {
+    font-size: 1.1rem;
+}
+
+.proctor-timer span {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.proctor-warnings span {
+    color: #ff4d4d;
+    font-weight: bold;
+}
+
+#round-content {
+    /* 60px height of header + 20px padding */
+    padding-top: 80px; 
+    padding-bottom: 20px;
+    /* Full viewport height minus header */
+    height: calc(100vh - 80px); 
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.setup-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    align-items: start;
+    margin: 30px 0;
+}
+
+/* ⭐️ --- THIS IS THE FIX --- ⭐️ */
+.language-select-box {
+    background-color: #1F2937; /* Use the lighter dark content color */
+    border: 1px solid #374151; /* Use the dark border color */
+    border-radius: 8px;
+    padding: 20px;
+    text-align: left;
+}
+.language-select-box label {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #E5E7EB; /* Added light text color for the label */
+}
+/* ⭐️ --- END OF FIX --- ⭐️ */
+
+
+#ready-screen .round-list {
+    text-align: left;
+    max-width: 400px;
+    margin: 20px auto;
+    background: #1F2937; /* Dark bg */
+    border: 1px solid #374151; /* Dark border */
+    border-radius: 8px;
+    padding: 20px 20px 20px 40px;
+}
+#ready-screen .round-list li {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+/* Rule to fix the flipped camera */
+#interview-user-video {
+    transform: scaleX(-1);
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
