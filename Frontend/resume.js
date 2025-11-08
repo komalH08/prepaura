@@ -110,7 +110,7 @@ function initializeApp() {
       formData.append("resume_file", file);
 
       try {
-          const response = await fetch("https://prepmateai-project.vercel.app/upload-practice-resume", {
+          const response = await fetch("https://prepmate-backend-bpfn.onrender.com/upload-practice-resume", {
               method: "POST",
               body: formData,
           });
@@ -272,7 +272,7 @@ function initializeApp() {
       }
 
       try {
-        const response = await fetch("https://prepmateai-project.vercel.app/resume-conversation", {
+        const response = await fetch("https://prepmate-backend-bpfn.onrender.com/resume-conversation", {
           method: "POST",
           body: formData, 
         });

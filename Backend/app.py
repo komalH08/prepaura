@@ -30,7 +30,16 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 # --- App & DB Configuration ---
 app = Flask(__name__) 
 # We must list the exact origins. 'localhost' and '127.0.0.1' are seen as different!
-CORS(app, supports_credentials=True, origins=["http://localhost:8000", "https://prepmateai-project.vercel.app"], allow_headers=["Content-Type", "Authorization"], expose_headers=["Content-Type"])
+CORS(app,
+     supports_credentials=True,
+     origins=[
+         "http://localhost:8000",
+         "https://prepmateai-project.vercel.app",
+         "https://prepmate-backend-bpfn.onrender.com"
+     ],
+     allow_headers=["Content-Type", "Authorization"],
+     expose_headers=["Content-Type"]
+)
 
 # ⭐️ --- DATABASE CONFIGURATION UPDATE --- ⭐️
 # Get the database URL from an environment variable
@@ -560,10 +569,11 @@ def generate_final_report():
     return jsonify({"report": report_text})
 
 
+import os   # ✅ ensure this is at the top of file
+
 if __name__ == '__main__':
-    # This line checks if 'prepmate.db' exists and creates the tables if not.
     with app.app_context():
         db.create_all()
-    
-    # We are now running on port 8000
-        app.run(debug=False, host='0.0.0.0', port=8000)
+
+    port = int(os.environ.get("PORT", 8000))  # ✅ Render will override
+    app.run(debug=False, host='0.0.0.0', port=port)
