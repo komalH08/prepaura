@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 import whisper
 import json
 from collections import Counter
-import librosa
 import pdfplumber
 import re 
 import requests 
@@ -17,7 +16,6 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 JUDGE0_API_KEY = os.getenv("JUDGE0_API_KEY") 
 
 genai.configure(api_key=GEMINI_API_KEY)
-whisper_model = whisper.load_model("base")
 
 # ⭐️ --- ERROR HANDLING WRAPPER --- ⭐️
 def handle_gemini_errors(func):
@@ -65,13 +63,23 @@ def extract_text_from_pdf(pdf_file_path):
 def transcribe_audio_to_text(audio_file_path):
     try:
         print(f"Transcribing audio from: {audio_file_path}")
+
+        import whisper
+        whisper_model = whisper.load_model("tiny")  # ✅ load only when needed
+
         result = whisper_model.transcribe(audio_file_path)
-        transcribed_text = result["text"]
-        print(f"Transcribed text: {transcribed_text}")
-        return transcribed_text
+
+        transcript = result["text"]
+        duration_seconds = result["duration"]  # ✅ Whisper already gives audio duration
+
+        print(f"Transcribed text: {transcript}")
+        print(f"Duration: {duration_seconds} seconds")
+
+        return transcript, duration_seconds
+
     except Exception as e:
         print(f"Error during transcription: {e}")
-        return f"Error: {str(e)}"
+        return f"Error: {str(e)}", 0
 
 @handle_gemini_errors
 def generate_ai_question(topic, resume_text=None):
@@ -110,11 +118,10 @@ def generate_ai_question(topic, resume_text=None):
     return response.text.strip() 
 
 @handle_gemini_errors
-def get_ai_response(interview_question, user_answer, expression_data_json, audio_file_path):
+def get_ai_response(interview_question, user_answer, expression_data_json, duration_seconds):
     model = genai.GenerativeModel("models/gemini-flash-latest")
     audio_analysis_summary = "No audio analysis was performed."
     try:
-        duration_seconds = librosa.get_duration(path=audio_file_path)
         words = user_answer.split()
         word_count = len(words)
         duration_minutes = duration_seconds / 60.0
@@ -367,11 +374,10 @@ def run_code_with_judge0(user_code, language, test_cases):
 
 
 @handle_gemini_errors
-def get_communication_feedback(topic, user_answer, expression_data_json, audio_file_path):
+def get_communication_feedback(topic, user_answer, expression_data_json, duration_seconds):
     model = genai.GenerativeModel("models/gemini-flash-latest")
     audio_analysis_summary = "No audio analysis was performed."
     try:
-        duration_seconds = librosa.get_duration(path=audio_file_path)
         words = user_answer.split()
         word_count = len(words)
         duration_minutes = duration_seconds / 60.0

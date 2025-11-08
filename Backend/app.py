@@ -321,7 +321,7 @@ def interview():
         filename = "temp_audio.webm" 
         audio_file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         audio_file.save(audio_file_path)
-        user_answer_text = transcribe_audio_to_text(audio_file_path)
+        user_answer_text, duration_seconds = transcribe_audio_to_text(audio_file_path)
         if "Error:" in user_answer_text:
              os.remove(audio_file_path)
              return jsonify({"error": f"Transcription failed: {user_answer_text}"}), 500
@@ -330,7 +330,7 @@ def interview():
             interview_question, 
             user_answer_text, 
             expression_data_json,
-            audio_file_path
+            duration_seconds
         )
         os.remove(audio_file_path)
         return jsonify({"feedback": ai_feedback})
@@ -356,7 +356,7 @@ def communication_feedback():
         audio_file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         audio_file.save(audio_file_path)
         
-        user_answer_text = transcribe_audio_to_text(audio_file_path)
+        user_answer_text, duration_seconds = transcribe_audio_to_text(audio_file_path)
         if "Error:" in user_answer_text:
              os.remove(audio_file_path)
              return jsonify({"error": f"Transcription failed: {user_answer_text}"}), 500
@@ -365,7 +365,7 @@ def communication_feedback():
             topic, 
             user_answer_text, 
             expression_data_json,
-            audio_file_path
+            duration_seconds
         )
         
         os.remove(audio_file_path)
@@ -404,7 +404,7 @@ def managerial_conversation():
             audio_file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             audio_file.save(audio_file_path)
             
-            user_answer_text = transcribe_audio_to_text(audio_file_path)
+            user_answer_text, duration_seconds = transcribe_audio_to_text(audio_file_path)
             if "Error:" in user_answer_text:
                 os.remove(audio_file_path)
                 return jsonify({"error": f"Transcription failed: {user_answer_text}"}), 500
@@ -447,7 +447,7 @@ def hr_conversation():
             audio_file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             audio_file.save(audio_file_path)
             
-            user_answer_text = transcribe_audio_to_text(audio_file_path)
+            user_answer_text, duration_seconds = transcribe_audio_to_text(audio_file_path)
             if "Error:" in user_answer_text:
                 os.remove(audio_file_path)
                 return jsonify({"error": f"Transcription failed: {user_answer_text}"}), 500
@@ -518,7 +518,7 @@ def resume_conversation():
             audio_file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             audio_file.save(audio_file_path)
             
-            user_answer_text = transcribe_audio_to_text(audio_file_path)
+            user_answer_text, duration_seconds = transcribe_audio_to_text(audio_file_path)
             if "Error:" in user_answer_text:
                 os.remove(audio_file_path)
                 return jsonify({"error": f"Transcription failed: {user_answer_text}"}), 500
@@ -566,4 +566,4 @@ if __name__ == '__main__':
         db.create_all()
     
     # We are now running on port 8000
-        app.run(debug=True, host='localhost', port=8000)
+        app.run(debug=False, host='0.0.0.0', port=8000)

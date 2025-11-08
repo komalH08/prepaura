@@ -1,14 +1,12 @@
-flask
-flask-cors
+Flask
+Flask-Cors
 google-generativeai
 python-dotenv
-openai-whisper
-openai
-librosa
+whisper
 pdfplumber
 requests
 gunicorn
 Flask-SQLAlchemy
-Flask-Bcrypt      # <-- ADD THIS
-Flask-Login       # <-- ADD THIS
-psycopg2-binary  
+Flask-Bcrypt
+Flask-Login
+psycopg2-binary
