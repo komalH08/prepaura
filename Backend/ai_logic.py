@@ -93,12 +93,25 @@ def transcribe_audio_to_text(audio_file_path):
         print("Sending audio to Hugging Face API... (this may take a moment)")
         response = requests.post(HF_API_URL, headers=HF_HEADERS, data=audio_data)
         
+       # ⭐️ --- START OF FIX --- ⭐️
+        # This block now safely handles non-JSON errors
         if response.status_code != 200:
-            error_info = response.json()
-            if "error" in error_info and "estimated_time" in error_info:
-                 # This happens when the model is loading.
-                 return f"Error: The AI model is starting up. Please try again in {int(error_info['estimated_time'])} seconds.", 0
-            return f"Error: Hugging Face API returned status {response.status_code}. {response.text}", 0
+            error_message = f"Hugging Face API returned status {response.status_code}."
+            try:
+                # Try to parse the error as JSON
+                error_info = response.json()
+                if "error" in error_info and "estimated_time" in error_info:
+                     # This is a "model is loading" error
+                     return f"Error: The AI model is starting up. Please try again in {int(error_info['estimated_time'])} seconds.", 0
+                elif "error" in error_info:
+                    error_message = f"Error: {error_info.get('error')}"
+            except requests.exceptions.JSONDecodeError:
+                # This catches the "Expecting value..." error if the response is empty or HTML
+                error_message = f"Error: Hugging Face API returned a non-JSON error. {response.text}"
+            
+            print(error_message)
+            return error_message, 0
+        # ⭐️ --- END OF FIX --- ⭐️
 
         # 3. Process the result
         result = response.json()
@@ -122,7 +135,6 @@ def transcribe_audio_to_text(audio_file_path):
         print(f"Error during Hugging Face API transcription: {e}")
         return f"Error: {str(e)}", 0
 # ⭐️ --- END REBUILT TRANSCRIBE FUNCTION --- ⭐️
-
 
 @handle_gemini_errors
 def generate_ai_question(topic, resume_text=None):
