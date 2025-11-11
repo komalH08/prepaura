@@ -101,7 +101,7 @@ def transcribe_audio_to_text(audio_file_path):
 
         print("🎙️ Sending to HuggingFace Whisper (router API)...")
 
-        HF_URL = "https://router.huggingface.co/hf-inference/models/openai/whisper-tiny?task=automatic-speech-recognition"
+        HF_URL = "https://router.huggingface.co/hf-inference/models/openai/whisper-tiny.en?task=automatic-speech-recognition"
         headers = {"Authorization": f"Bearer {HF_API_KEY}"}
 
         with open(wav_path, "rb") as f:
