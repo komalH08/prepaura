@@ -99,15 +99,16 @@ def transcribe_audio_to_text(audio_file_path):
             wav_path
         ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        print("🎙️ Sending to HuggingFace Whisper (new router API)...")
+        print("🎙️ Sending to HuggingFace Whisper (router API)...")
 
-        HF_URL = "https://router.huggingface.co/hf-inference/models/openai/whisper-tiny"
+        HF_URL = "https://router.huggingface.co/hf-inference/models/openai/whisper-tiny?task=automatic-speech-recognition"
         headers = {"Authorization": f"Bearer {HF_API_KEY}"}
 
         with open(wav_path, "rb") as f:
             files = {"file": ("audio.wav", f, "audio/wav")}
             response = requests.post(HF_URL, headers=headers, files=files)
 
+        # router returns JSON with text
         if response.status_code != 200:
             print("❌ HF API Error:", response.text)
             return f"Error: ASR failed -> {response.text}", 0
