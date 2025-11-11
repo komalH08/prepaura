@@ -81,52 +81,56 @@ def extract_text_from_pdf(pdf_file_path):
 # ⭐️ --- FINAL, CORRECT TRANSCRIBE FUNCTION --- ⭐️
 def transcribe_audio_to_text(audio_file_path):
     try:
-        if not HF_API_KEY:
-            print("❌ Missing HF_API_KEY")
-            return "Error: Hugging Face API key missing", 0
-
         import subprocess
         import tempfile
         import requests
 
+        if not HF_API_KEY:
+            return "Error: Hugging Face key missing.", 0
+
         print("⚙️ Converting WEBM → WAV using ffmpeg...")
 
-        # convert webm → wav
         wav_path = tempfile.mktemp(suffix=".wav")
+
         subprocess.run([
             "ffmpeg", "-i", audio_file_path,
             "-ac", "1", "-ar", "16000",
             wav_path
         ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        print("🎙️ Sending to HuggingFace Whisper (router API)...")
-
-        HF_URL = "https://router.huggingface.co/hf-inference/models/openai/whisper-tiny.en?task=automatic-speech-recognition"
-        headers = {"Authorization": f"Bearer {HF_API_KEY}"}
+        print("🎙️ Uploading to HuggingFace Whisper API...")
 
         with open(wav_path, "rb") as f:
-            files = {"file": ("audio.wav", f, "audio/wav")}
-            response = requests.post(HF_URL, headers=headers, files=files)
+            files = {
+                "file": ("audio.wav", f, "audio/wav"),
+            }
+            data = {
+                "model": "openai/whisper-tiny.en",
+                "language": "en",
+            }
+            headers = {
+                "Authorization": f"Bearer {HF_API_KEY}"
+            }
 
-        # router returns JSON with text
+            response = requests.post(
+                "https://api.huggingface.co/v1/audio/transcriptions",
+                headers=headers,
+                data=data,
+                files=files,
+            )
+
         if response.status_code != 200:
             print("❌ HF API Error:", response.text)
-            return f"Error: ASR failed -> {response.text}", 0
+            return f"Error: ASR failed: {response.text}", 0
 
-        result = response.json()
-        transcript = result.get("text", "").strip()
-
-        if not transcript:
-            print("❌ No text detected")
-            return "Error: No speech detected", 0
+        transcript = response.json().get("text", "").strip()
 
         print("✅ Transcription:", transcript)
         return transcript, 0
 
     except Exception as e:
-        print("!!!!!!!!!!!!!! TRANSCRIPTION FAILED !!!!!!!!!!!!!!")
+        import traceback
         traceback.print_exc()
-        print(f"❌ Error Type: {type(e).__name__}")
         return f"Error: ASR failed -> {str(e)}", 0
 # ⭐️ --- END FINAL TRANSCRIBE FUNCTION --- ⭐️
 
