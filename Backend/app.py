@@ -58,6 +58,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Make sure to change this secret key before deployment!
 app.config['SECRET_KEY'] = 'your-super-secret-key-change-this' 
 
+# ⭐️ --- ADD THESE 3 LINES FOR CROSS-DOMAIN LOGIN --- ⭐️
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SECURE'] = True  # Ensures cookie is only sent over HTTPS
+app.config['SESSION_COOKIE_SAMESITE'] = 'None' # Allows cookie to be sent cross-domain
+# ⭐️ --- END OF NEW LINES --- ⭐️
+
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app) 
 
