@@ -86,11 +86,12 @@ def transcribe_audio_to_text(audio_file_path):
         # 1. Send the request to Hugging Face using the new client
         # This client handles the new router URL automatically
         # We also ask for timestamps to get the duration
+       # YOUR NEW (FIXED) CODE:
+
         result = hf_client.automatic_speech_recognition(
             audio=audio_file_path,
             model="openai/whisper-base",
-            # ⭐️ --- FIX: REMOVED THE 'response_format="json"' LINE --- ⭐️
-            chunk_level_timestamp=True,
+            return_timestamps=True, # <-- THIS IS THE FIX
         )
         
         # 2. Process the result
