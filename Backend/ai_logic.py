@@ -85,49 +85,53 @@ def transcribe_audio_to_text(audio_file_path):
         if not hf_client:
             print("Error: Hugging Face client (hf_client) is not configured.")
             return "Error: Hugging Face client is not configured.", 0
-            
-        # 1. Read the file into raw bytes
-        # This prevents any file streaming errors like StopIteration.
-        print(f"Opening and reading audio file: {audio_file_path}")
-        with open(audio_file_path, "rb") as f:
+
+        import subprocess
+        import tempfile
+
+        print("⚙️ Converting WEBM → WAV using ffmpeg...")
+
+        # Create temporary wav output file
+        wav_path = tempfile.mktemp(suffix=".wav")
+
+        # Convert to 16k Hz mono WAV (Whisper-compatible)
+        subprocess.run([
+            "ffmpeg", "-i", audio_file_path,
+            "-ac", "1", "-ar", "16000",
+            wav_path
+        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        # Read converted wav file
+        with open(wav_path, "rb") as f:
             audio_bytes = f.read()
-        
+
         if not audio_bytes:
-            print("Error: Audio file is 0 bytes.")
+            print("Error: Converted WAV file is 0 bytes.")
             return "Error: The recorded audio file was empty.", 0
-        
-        # 2. Call the updated InferenceClient
-        # We will use a small, fast, and standard model.
-        # The new, updated hf_client (thanks to requirements.txt)
-        # will correctly route this to the new Hugging Face router.
-        print("Transcribing... (using InferenceClient and openai/whisper-tiny)")
+
+        print("🎙️ Transcribing (Whisper model: openai/whisper-tiny)...")
         result = hf_client.automatic_speech_recognition(
             audio=audio_bytes,
             model="openai/whisper-tiny"
         )
-        
-        # 3. Process the result
+
         if not result or not result.get("text"):
             print(f"Transcription failed: 'text' key not in result. Full result: {result}")
             return "Error: No speech was detected in the audio.", 0
 
         transcript = result["text"].strip()
-        
-        # This simple client call does not return timestamps.
-        # Your app's downstream code already handles duration_seconds=0 gracefully.
         duration_seconds = 0
-        
-        print(f"Transcribed text: {transcript}")
+
+        print(f"✅ Transcribed text: {transcript}")
         return transcript, duration_seconds
 
     except Exception as e:
-        # 4. Keep the enhanced logging
         print("!!!!!!!!!!!!!! TRANSCRIPTION FAILED (FULL TRACEBACK) !!!!!!!!!!!!!!")
         traceback.print_exc()
         print(f"Exception Type: {type(e)}")
         print(f"Exception Repr: {repr(e)}")
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        
+
         return f"Error: ASR failed. Type: {type(e).__name__}. Check server logs.", 0
 # ⭐️ --- END FINAL TRANSCRIBE FUNCTION --- ⭐️
 
