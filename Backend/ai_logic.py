@@ -22,7 +22,8 @@ HF_API_KEY = os.getenv("HF_API_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
 
 # ⭐️ --- NEW: HUGGING FACE API CONFIG --- ⭐️
-HF_API_URL = "HF_API_URL = "https://api-inference.huggingface.co/models/openai/whisper-base"
+# THE CORRECT LINE:
+HF_API_URL = "https://api-inference.huggingface.co/models/openai/whisper-base"
 HF_HEADERS = {"Authorization": f"Bearer {HF_API_KEY}"}
 
 if not HF_API_KEY:
