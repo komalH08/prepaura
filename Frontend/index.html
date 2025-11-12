@@ -37,7 +37,7 @@
       text-align: center;
     }
 
-    /* --- Logo Background Section --- */
+    /* --- Logo Section --- */
     .logo-section {
       background: linear-gradient(180deg, #f5f7fa, #e2e8f0, #dbeafe);
       border-radius: 20px;
@@ -93,6 +93,14 @@
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 30px;
       margin-top: 40px;
+    }
+
+    .ai-feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      max-width: 900px;
+      margin: 40px auto;
     }
 
     .feature-item, .detailed-feature-card {
@@ -176,6 +184,12 @@
       color: #dbeafe;
     }
 
+    @media (max-width: 800px) {
+      .ai-feature-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     @media (max-width: 600px) {
       .splash-logo {
         width: 240px;
@@ -227,7 +241,7 @@
 
     <!-- AI Feature Highlights -->
     <h2 class="splash-heading">AI That Coaches You Smarter</h2>
-    <div class="feature-grid">
+    <div class="ai-feature-grid">
       <div class="detailed-feature-card">
         <h3>🎙️ Voice Analysis</h3>
         <p>AI listens to your tone, pace, clarity, and confidence during communication and HR rounds to provide detailed improvement suggestions.</p>
