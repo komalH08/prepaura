@@ -7,91 +7,102 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="practice-tool.css" />
 
-  <!-- Particles -->
+  <!-- Particle.js -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <style>
-    /* Minimal theme overrides to give glassmorphism while keeping original classes */
-    :root{
-      --glass-bg: rgba(255,255,255,0.04);
-      --glass-border: rgba(255,255,255,0.06);
+    :root {
+      --glass-bg: rgba(255,255,255,0.05);
+      --glass-border: rgba(255,255,255,0.1);
+      --accent: #38bdf8;
     }
 
-    /* Particles container sits behind everything */
     #particles-js {
       position: fixed;
       inset: 0;
-      z-index: -2;
-      background: linear-gradient(135deg, #0a1626 0%, #102a5a 50%, #16327a 100%);
+      z-index: -1;
+      background: linear-gradient(135deg, #0a1626, #102a5a, #16327a);
     }
 
-    /* Slight translucent glass for the original container */
     .container {
       background: var(--glass-bg) !important;
       border: 1px solid var(--glass-border) !important;
-      box-shadow: 0 12px 30px rgba(2,6,23,0.55) !important;
-      backdrop-filter: blur(10px) saturate(120%) !important;
-      transition: transform .28s ease, opacity .6s ease;
-      border-radius: 12px !important;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      border-radius: 16px !important;
+      backdrop-filter: blur(12px) !important;
     }
 
-    /* Make headings and intro pop a little */
-    #setup-screen h1 {
-      color: #E6F2FF;
-      margin-top: 0;
-    }
-    #setup-screen p { color: #D1E6FF; }
-
-    /* Fade-in helper for the three main views */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity .6s ease, transform .5s ease;
-    }
-    .fade-in.show {
-      opacity: 1;
-      transform: translateY(0);
+    /* Question box glassmorphic glow */
+    .question-box {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+      padding: 20px;
+      color: #e5edff;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.25);
+      transition: transform 0.25s ease, box-shadow 0.3s ease;
     }
 
-    /* Make spinner overlay a bit sleeker */
-    .spinner-overlay {
-      background: rgba(4,8,16,0.7);
-      color: #dbeafe;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex-direction:column;
-      gap:12px;
-      border-radius:8px;
+    .question-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35);
     }
 
-    /* Small tweak for particle canvas to ensure responsive behavior */
-    canvas.particles-js-canvas-el { width:100% !important; height:100% !important; }
-
-    /* Lower the emphasis of the solution box default */
-    .solution-box { color: #e6eef8; }
-
-    @media (max-width: 700px) {
-      .container { padding: 22px; }
+    /* Re-align buttons neatly */
+    .nav-button-row,
+    .solution-button-row,
+    .button-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 15px;
     }
+
+    /* Center Show Solution neatly below */
+    .solution-button-row {
+      margin-top: 10px;
+    }
+
+    #solution-btn {
+      min-width: 180px;
+    }
+
+    .stats-bar {
+      background: rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 10px 15px;
+      color: #dce7ff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 500;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* Subtle fade-in animation for transitions */
+    .fade-in { opacity: 0; transform: translateY(10px); transition: opacity .5s, transform .4s; }
+    .fade-in.show { opacity: 1; transform: translateY(0); }
   </style>
 </head>
-<body>
 
-  <!-- Particles background -->
+<body>
+  <!-- 🔮 Particle Background -->
   <div id="particles-js"></div>
 
+  <!-- 🌐 Navbar -->
   <nav class="navbar">
     <div class="nav-brand">Prepmate AI</div>
-    <ul class="nav-links" id="nav-links-list">
-      <!-- nav links kept intentionally empty here (same as your old file) -->
-    </ul>
+    <ul class="nav-links" id="nav-links-list"></ul>
   </nav>
 
   <main class="content">
     <div class="container">
 
-      <!-- SETUP: IDs left unchanged -->
+      <!-- Setup Screen -->
       <div id="setup-screen" class="fade-in show">
         <h1>Aptitude Practice</h1>
         <p>Select a topic to begin your practice session.</p>
@@ -105,48 +116,43 @@
         <button id="start-btn" class="tool-button-primary">Start Practice</button>
       </div>
 
-      <!-- PRACTICE: IDs & classes unchanged; UI styling preserved -->
-      <div id="practice-screen" class="hidden fade-in" >
-        <div class="stats-bar" style="display:flex; gap:12px; justify-content:space-between; align-items:center;">
+      <!-- Practice Screen -->
+      <div id="practice-screen" class="hidden fade-in">
+        <div class="stats-bar">
           <div id="question-counter">Question: 1</div>
           <div id="question-topic">Topic: ...</div>
           <div id="question-timer">Time: 0s</div>
         </div>
 
-        <div class="question-box" id="question-text" style="margin-top:12px;">
+        <div class="question-box" id="question-text">
           Loading question...
         </div>
 
-        <div class="options-grid" id="options-grid" style="margin-top:12px;"></div>
+        <div class="options-grid" id="options-grid"></div>
 
-        <div class="nav-button-row" style="margin-top:14px; display:flex; gap:10px; justify-content:space-between; align-items:center;">
-          <div style="flex:1 1 auto">
-            <button id="submit-btn" class="tool-button">Submit</button>
-            <button id="next-btn" class="tool-button-primary hidden">Next Question</button>
-          </div>
-          <div style="flex:0 0 160px; text-align:right">
-            <!-- keep the solution button row and end button visible in original positions -->
-            <button id="solution-btn" class="tool-button-solution hidden">Show Solution</button>
-          </div>
+        <div class="nav-button-row">
+          <button id="submit-btn" class="tool-button">Submit</button>
+          <button id="next-btn" class="tool-button-primary hidden">Next Question</button>
         </div>
 
-        <div class="solution-box hidden" id="solution-box" style="margin-top:12px;"></div>
+        <div class="solution-button-row">
+          <button id="solution-btn" class="tool-button-solution hidden">Show Solution</button>
+        </div>
 
-        <div class="button-row" style="margin-top:14px;">
+        <div class="solution-box hidden" id="solution-box"></div>
+
+        <div class="button-row">
           <button id="end-btn" class="tool-button-danger">End Practice</button>
         </div>
       </div>
 
-      <!-- FEEDBACK: unchanged IDs -->
-      <div id="feedback-screen" class="hidden fade-in" style="margin-top:12px;">
+      <!-- Feedback Screen -->
+      <div id="feedback-screen" class="hidden fade-in">
         <h2>Practice Report</h2>
-        <div class="response-box" id="feedback-report">
-          Generating your feedback...
-        </div>
+        <div class="response-box" id="feedback-report">Generating your feedback...</div>
         <button id="restart-btn" class="tool-button-primary">Practice Again</button>
       </div>
 
-      <!-- LOADING: kept as before, styled slightly by CSS override above -->
       <div id="loading-spinner" class="spinner-overlay" style="display: none;">
         <div class="spinner"></div>
         <p>Cooking questions for you...</p>
@@ -158,54 +164,46 @@
   <script src="aptitude.js"></script>
   <script src="auth.js"></script>
 
-  <!-- Particles config - subtle and cursor-reactive -->
+  <!-- 🎇 Particles Config (same as practice.html) -->
   <script>
     particlesJS("particles-js", {
       particles: {
-        number: { value: 40, density: { enable: true, value_area: 700 } }, // reduced count
+        number: { value: 65, density: { enable: true, value_area: 900 } },
         color: { value: "#38bdf8" },
         shape: { type: "circle" },
-        opacity: { value: 0.45, random: false },
-        size: { value: 2, random: true }, // smaller size
+        opacity: { value: 0.5 },
+        size: { value: 3.5, random: true },
         line_linked: {
           enable: true,
-          distance: 130,
+          distance: 150,
           color: "#60a5fa",
-          opacity: 0.28,
-          width: 1
+          opacity: 0.4,
+          width: 1.2
         },
         move: {
           enable: true,
-          speed: 1.6,
-          direction: "none",
-          random: false,
-          straight: false,
-          out_mode: "out",
-          bounce: false
+          speed: 2.2,
+          out_mode: "out"
         }
       },
       interactivity: {
         detect_on: "canvas",
         events: {
-          onhover: { enable: true, mode: "grab" }, // cursor-reactive
-          onclick: { enable: true, mode: "push" },
+          onhover: { enable: true, mode: "grab" },
+          onclick: { enable: true, mode: "repulse" },
           resize: true
         },
         modes: {
-          grab: { distance: 180, line_linked: { opacity: 0.75 } },
-          repulse: { distance: 110, duration: 0.4 },
-          push: { particles_nb: 3 }
+          grab: { distance: 180, line_linked: { opacity: 0.8 } },
+          repulse: { distance: 140, duration: 0.4 }
         }
       },
       retina_detect: true
     });
 
-    // keep fade-in classes in sync if JS shows/hides screens
     const fadeEls = document.querySelectorAll('.fade-in');
     const io = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) e.target.classList.add('show');
-      });
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
     }, { threshold: 0.15 });
     fadeEls.forEach(el => io.observe(el));
   </script>
