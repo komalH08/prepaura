@@ -87,6 +87,23 @@
       background: rgba(255,255,255,0.05);
     }
 
+    #resume-upload {
+      margin-top: 12px;
+      margin-bottom: 15px;
+      padding: 8px;
+      color: #cbd5e1;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      border-radius: 6px;
+    }
+
+    #resume-status {
+      display: block;
+      margin-top: 10px;
+      color: #93c5fd;
+      font-size: 0.95rem;
+    }
+
     @media(max-width:700px){
       .container{padding:18px;}
     }
@@ -112,7 +129,8 @@
           <label for="resume-upload">Upload Your Resume (PDF):</label><br>
           <input type="file" id="resume-upload" accept=".pdf" />
           <br>
-          <button id="upload-btn" class="tool-button-primary" style="width:auto;margin-top:15px;">Upload</button>
+          <button id="upload-btn" class="tool-button-primary" style="margin-top:15px;">Upload</button>
+          <div id="model-status">Loading AI Face Models...</div>
           <span id="resume-status"></span>
         </div>
       </div>
@@ -122,9 +140,7 @@
 
         <div id="typing-indicator" class="hidden">
           <div class="chat-bubble ai">
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
+            <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
           </div>
         </div>
 
@@ -162,11 +178,21 @@
   <script src="resume.js"></script>
   <script src="auth.js"></script>
 
-  <!-- Camera visibility -->
+  <!-- File Label & Camera Visibility -->
   <script>
     const videoContainer=document.getElementById("video-container");
     const recordBtn=document.getElementById("record-button");
     const stopBtn=document.getElementById("stop-button");
+    const uploadInput=document.getElementById("resume-upload");
+    const uploadStatus=document.getElementById("resume-status");
+
+    // File name display
+    uploadInput.addEventListener("change", (e)=>{
+      const file=e.target.files[0];
+      if(file){
+        uploadStatus.textContent = `✅ ${file.name} uploaded successfully.`;
+      }
+    });
 
     if(videoContainer&&recordBtn&&stopBtn){
       videoContainer.style.display="none";
