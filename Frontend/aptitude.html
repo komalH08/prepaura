@@ -261,9 +261,11 @@
       <h2>📋 Choose Topic</h2>
       <select id="topic-select">
         <option value="">Select a topic</option>
-        <option value="quantitative">Quantitative Aptitude</option>
-        <option value="logical">Logical Reasoning</option>
-        <option value="verbal">Verbal Ability</option>
+        <option value="Quantitative Aptitude">Quantitative Aptitude</option>
+        <option value="Logical Reasoning">Logical Reasoning</option>
+        <option value="Verbal Ability">Verbal Ability</option>
+        <option value="Data Interpretation">Data Interpretation</option>
+        <option value="Mix">Mix (All Topics)</option>
       </select><br><br>
       <button id="start-practice">Start Practice</button>
     </div>
@@ -316,6 +318,17 @@
         modes: { grab: { distance: 180, line_linked: { opacity: 0.8 } }, repulse: { distance: 120, duration: 0.4 }, push: { particles_nb: 4 } }
       },
       retina_detect: true
+    });
+
+    // Ensure the Start Practice button works
+    document.getElementById("start-practice").addEventListener("click", () => {
+      const topic = document.getElementById("topic-select").value;
+      if (!topic) {
+        alert("Please select a topic before starting!");
+        return;
+      }
+      document.getElementById("setup-screen").classList.add("hidden");
+      document.getElementById("practice-screen").classList.remove("hidden");
     });
 
     // Smooth fade-in for cards
