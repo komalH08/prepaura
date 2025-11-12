@@ -148,22 +148,22 @@
       background: #1e3a8a;
     }
 
-    /* ✅ Fix the white loading box issue */
+    /* ✅ FIX — Darken the full white loader box */
     #round-content.loading {
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 300px;
-      position: relative;
     }
 
-    /* This targets the inner white loader box (the one shown while buffering) */
     #round-content.loading > div {
-      background: rgba(15, 23, 42, 0.92); /* Dark navy glass */
+      background: linear-gradient(145deg, rgba(9, 15, 30, 0.95), rgba(15, 23, 42, 0.9));
       border-radius: 16px;
       padding: 80px 60px;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(10px);
+      width: 100%;
+      max-width: 700px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -176,9 +176,10 @@
       font-weight: 600;
       color: #ffffff !important;
       text-align: center;
-      text-shadow: 0 0 8px rgba(56, 189, 248, 0.8), 0 0 18px rgba(30, 58, 138, 0.5);
-      margin-top: 18px;
-      animation: fadeIn 0.5s ease-in-out;
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.9),
+                   0 0 20px rgba(30, 58, 138, 0.6);
+      margin-top: 20px;
+      animation: fadeIn 0.6s ease-in-out;
     }
 
     @keyframes fadeIn {
