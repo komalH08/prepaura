@@ -80,53 +80,102 @@ def extract_text_from_pdf(pdf_file_path):
 
 # ⭐️ --- FINAL, CORRECT TRANSCRIBE FUNCTION --- ⭐️
 def transcribe_audio_to_text(audio_file_path):
+    """
+    Convert incoming webm -> wav (ffmpeg), upload to AssemblyAI, request transcription,
+    poll for completion, return (transcript, duration_seconds)
+    """
     try:
         import subprocess
         import tempfile
+        import time
         import requests
+        import os
 
-        if not HF_API_KEY:
-            return "Error: Hugging Face key missing.", 0
+        ASSEMBLY_API_KEY = os.getenv("ASSEMBLYAI_API_KEY")
+        if not ASSEMBLY_API_KEY:
+            print("❌ Missing ASSEMBLYAI_API_KEY")
+            return "Error: AssemblyAI API key missing.", 0
 
         print("⚙️ Converting WEBM → WAV using ffmpeg...")
-
         wav_path = tempfile.mktemp(suffix=".wav")
-
         subprocess.run([
             "ffmpeg", "-i", audio_file_path,
             "-ac", "1", "-ar", "16000",
             wav_path
         ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        print("🎙️ Uploading to HuggingFace Whisper API...")
-
+        # Read WAV bytes for upload
         with open(wav_path, "rb") as f:
-            files = {
-                "file": ("audio.wav", f, "audio/wav"),
-            }
-            data = {
-                "model": "openai/whisper-tiny.en",
-                "language": "en",
-            }
-            headers = {
-                "Authorization": f"Bearer {HF_API_KEY}"
-            }
+            wav_bytes = f.read()
 
-            response = requests.post(
-                "https://api.huggingface.co/v1/audio/transcriptions",
-                headers=headers,
-                data=data,
-                files=files,
-            )
+        if not wav_bytes:
+            print("❌ WAV conversion produced empty file")
+            return "Error: The recorded audio file was empty.", 0
 
-        if response.status_code != 200:
-            print("❌ HF API Error:", response.text)
-            return f"Error: ASR failed: {response.text}", 0
+        print("📤 Uploading audio to AssemblyAI...")
+        upload_url = "https://api.assemblyai.com/v2/upload"
+        headers = {"authorization": ASSEMBLY_API_KEY}
 
-        transcript = response.json().get("text", "").strip()
+        # streaming upload (recommended)
+        upload_resp = requests.post(upload_url, headers=headers, data=wav_bytes)
+        if upload_resp.status_code != 200:
+            print("❌ AssemblyAI upload error:", upload_resp.status_code, upload_resp.text)
+            return f"Error: ASR failed -> upload error: {upload_resp.text}", 0
 
-        print("✅ Transcription:", transcript)
-        return transcript, 0
+        audio_url = upload_resp.json().get("upload_url")
+        if not audio_url:
+            print("❌ Upload response missing upload_url:", upload_resp.text)
+            return f"Error: ASR failed -> upload response invalid", 0
+
+        print("▶️ Requesting transcription...")
+        transcript_url = "https://api.assemblyai.com/v2/transcript"
+        json_payload = {
+            "audio_url": audio_url,
+            # optional: add "language_code": "en" or other params if needed
+            # "language_code": "en"
+        }
+        trans_resp = requests.post(transcript_url, json=json_payload, headers=headers)
+        if trans_resp.status_code != 200 and trans_resp.status_code != 201:
+            print("❌ AssemblyAI transcription request error:", trans_resp.status_code, trans_resp.text)
+            return f"Error: ASR failed -> transcript request error: {trans_resp.text}", 0
+
+        transcript_id = trans_resp.json().get("id")
+        if not transcript_id:
+            print("❌ No transcript id returned:", trans_resp.text)
+            return f"Error: ASR failed -> no transcript id", 0
+
+        # Polling for completion (timeout after e.g. 60 seconds)
+        poll_url = f"https://api.assemblyai.com/v2/transcript/{transcript_id}"
+        timeout_seconds = 60
+        poll_interval = 1.5
+        elapsed = 0.0
+
+        print("⏳ Waiting for transcription to complete...")
+        while elapsed < timeout_seconds:
+            status_resp = requests.get(poll_url, headers=headers)
+            if status_resp.status_code != 200:
+                print("❌ AssemblyAI status error:", status_resp.status_code, status_resp.text)
+                return f"Error: ASR failed -> status error: {status_resp.text}", 0
+
+            status_json = status_resp.json()
+            status = status_json.get("status")
+            if status == "completed":
+                transcript_text = status_json.get("text", "").strip()
+                print("✅ Transcription completed.")
+                # optional: get audio duration from status_json.get("audio_duration")
+                duration_seconds = status_json.get("audio_duration", 0)
+                return transcript_text, duration_seconds or 0
+            if status == "error":
+                err = status_json.get("error", "unknown error")
+                print("❌ AssemblyAI returned error:", err)
+                return f"Error: ASR failed -> {err}", 0
+
+            time.sleep(poll_interval)
+            elapsed += poll_interval
+
+        # timeout
+        print("❌ Transcription polling timed out.")
+        return "Error: ASR failed -> transcription timed out", 0
 
     except Exception as e:
         import traceback
