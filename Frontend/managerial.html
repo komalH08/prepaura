@@ -5,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Managerial Round - Prepmate AI</title>
   
-  <!-- Face API (kept in place) -->
+  <!-- Face API -->
   <script src="face-api.min.js"></script>
   
-  <!-- Keep original stylesheets (unchanged) -->
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="practice-tool.css" />
   <link rel="stylesheet" href="managerial.css" /> 
@@ -16,7 +15,6 @@
   <!-- Particles -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
-  <!-- Minimal inline theme overrides: glass look only (won't change IDs or structure) -->
   <style>
     :root {
       --glass-bg: rgba(255,255,255,0.06);
@@ -25,20 +23,17 @@
       --accent-2: #a78bfa;
     }
 
-    /* PrepAura gradient background behind everything */
     body {
       background: linear-gradient(135deg, #0a192f, #1e3a8a, #1e40af);
       color: #f5f6fa;
     }
 
-    /* Particles container (behind content) */
     #particles-js {
       position: fixed;
       inset: 0;
       z-index: -1;
     }
 
-    /* Keep original .container styles but add subtle glass */
     .container {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
@@ -47,17 +42,16 @@
       border-radius: 12px;
     }
 
-    /* A subtle accent for status box */
     #model-status, .status-box {
       color: #cfe9ff;
     }
 
-    /* Video container - keep layout but add thin accent border */
     .video-container {
-      display: block; /* ensure visible if your JS toggles it */
       margin-bottom: 15px;
       max-width: 420px;
+      display: none; /* hidden initially */
     }
+
     #user-video {
       width: 100%;
       height: auto;
@@ -67,7 +61,6 @@
       transform: scaleX(-1);
     }
 
-    /* Chat container styling (keeps same ID for JS) */
     #chat-container {
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.06);
@@ -78,15 +71,12 @@
       text-align: left;
     }
 
-    /* Chat bubbles keep their classes (ai/user) so JS still appends them */
     .ai { background: linear-gradient(90deg, #38bdf8, #3b82f6); color: #fff; }
     .user { background: linear-gradient(90deg, #a78bfa, #8b5cf6); color: #fff; }
 
-    /* Buttons: keep width & behavior from style.css but add subtle border color on hover */
     .tool-button-primary:hover { box-shadow: 0 6px 18px rgba(56,189,248,0.12); }
     .tool-button-danger:hover  { box-shadow: 0 6px 18px rgba(239,68,68,0.08); }
 
-    /* ensure spinner overlay still overlays properly */
     .spinner-overlay { backdrop-filter: blur(6px); }
 
     @media (max-width: 700px) {
@@ -94,15 +84,14 @@
     }
   </style>
 </head>
+
 <body>
 
-  <!-- Particles Background (interactive) -->
   <div id="particles-js"></div>
 
   <nav class="navbar">
     <div class="nav-brand">Prepmate AI</div>
-    <ul class="nav-links" id="nav-links-list">
-  </ul>
+    <ul class="nav-links" id="nav-links-list"></ul>
   </nav>
 
   <main class="content">
@@ -113,15 +102,11 @@
         <p>This is a 4-question live interview simulation with <strong>Prepmate</strong>, your AI Interview Architect. You will not receive feedback until the end.</p>
         <p>Prepmate will ask a question, and then a smart follow-up based on your answer. Good luck.</p>
         <div id="model-status">Loading AI Face Models...</div>
-        <!-- leave disabled state and ID exactly as original so manageria.js controls it -->
         <button id="start-btn" class="tool-button-primary" disabled>Begin Interview</button>
       </div>
 
       <div id="interview-screen" class="hidden">
-        
-        <div id="chat-container">
-          <!-- messages appended by managerial.js using same IDs/classes -->
-        </div>
+        <div id="chat-container"></div>
 
         <div id="typing-indicator" class="hidden">
           <div class="chat-bubble ai">
@@ -162,11 +147,29 @@
     </div>
   </main>
   
-  <!-- keep original logic files unchanged and in original order -->
   <script src="managerial.js"></script>
   <script src="auth.js"></script>
 
-  <!-- Particles config — interactive with cursor (grab + repulse) -->
+  <!-- Camera visibility patch -->
+  <script>
+    const videoContainer = document.getElementById("video-container");
+    const recordBtn = document.getElementById("record-button");
+    const stopBtn = document.getElementById("stop-button");
+
+    if (videoContainer && recordBtn && stopBtn) {
+      videoContainer.style.display = "none"; // hide initially
+
+      recordBtn.addEventListener("click", () => {
+        videoContainer.style.display = "block"; // show when recording starts
+      });
+
+      stopBtn.addEventListener("click", () => {
+        videoContainer.style.display = "none"; // hide when recording stops
+      });
+    }
+  </script>
+
+  <!-- Particles Config -->
   <script>
     particlesJS("particles-js", {
       particles: {
