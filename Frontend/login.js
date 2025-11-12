@@ -1,45 +1,53 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("login-form");
-  const errorMessage = document.getElementById("error-message");
+    const loginForm = document.getElementById("login-form");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const loginButton = document.getElementById("login-button");
+    const errorMessage = document.getElementById("error-message");
 
-  if (!form) {
-    console.error("Login form not found!");
-    return;
-  }
+    loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault(); // Stop the form from reloading the page
+        
+        const email = emailInput.value;
+        const password = passwordInput.value;
 
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
+        loginButton.disabled = true;
+        loginButton.innerText = "Logging in...";
+        errorMessage.style.display = "none";
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+        try {
+            // Call the /api/login route we created in app.py
+            const response = await fetch("https://prepmate-backend-x77z.onrender.com/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                }),
+                credentials: 'include',
+            });
 
-    if (!email || !password) {
-      errorMessage.textContent = "Please enter both email and password.";
-      errorMessage.style.display = "block";
-      return;
-    }
-
-    try {
-      const response = await fetch("https://prepmate-backend-x77z.onrender.com/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok && result.success) {
-        console.log("Login successful ✅");
-        localStorage.setItem("userEmail", email);
-        window.location.href = "home.html";
-      } else {
-        errorMessage.textContent = result.message || "Invalid credentials.";
-        errorMessage.style.display = "block";
-      }
-    } catch (err) {
-      console.error("Login error:", err);
-      errorMessage.textContent = "Server not reachable. Please try again later.";
-      errorMessage.style.display = "block";
-    }
-  });
+            const data = await response.json();
+            if (response.ok) {
+                // Success! Redirect to the home page
+                alert("Login successful! Welcome, " + data.username);
+                window.location.href = "home.html";
+            } else {
+                // Show the error from the server
+                errorMessage.innerText = `Error: ${data.error}`;
+                errorMessage.style.display = "block";
+                loginButton.disabled = false;
+                loginButton.innerText = "Login";
+            }
+        } catch (error) {
+            // Show a generic network error
+            errorMessage.innerText = "Error: Could not connect to the server.";
+            errorMessage.style.display = "block";
+            loginButton.disabled = false;
+            loginButton.innerText = "Login";
+            console.error("Login fetch error:", error);
+        }
+    });
 });
