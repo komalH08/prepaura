@@ -4,47 +4,208 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign Up - Prepmate AI</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="practice-tool.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #0a192f, #1e3a8a, #1e40af);
+      background-attachment: fixed;
+      color: #f5f6fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+      animation: fadeInBody 1.5s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeInBody {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- Navbar --- */
+    .navbar {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .nav-brand {
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: #ffffff;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #dbeafe;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #93c5fd;
+    }
+
+    /* --- Container --- */
+    .container {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 40px 50px;
+      width: 100%;
+      max-width: 420px;
+      margin-top: 80px;
+      text-align: center;
+      animation: slideIn 1.2s ease forwards;
+      opacity: 0;
+      box-sizing: border-box;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      color: #ffffff;
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      font-weight: 500;
+      color: #bfdbfe;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      box-sizing: border-box;
+      transition: border 0.3s ease, background-color 0.3s ease;
+    }
+
+    input:focus {
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid #3b82f6;
+    }
+
+    #message {
+      color: #f87171;
+      font-size: 0.95rem;
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    /* --- Button --- */
+    button {
+      width: 100%;
+      padding: 12px 15px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #2563eb, #1d4ed8);
+      color: #fff;
+      font-size: 1.1rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.25s ease, transform 0.2s ease;
+      box-sizing: border-box;
+      margin-top: 5px;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #1d4ed8, #1e3a8a);
+      transform: translateY(-2px);
+    }
+
+    /* --- Login Link --- */
+    .login-text {
+      margin-top: 20px;
+      font-size: 0.95rem;
+      color: #cbd5e1;
+    }
+
+    .login-text a {
+      color: #93c5fd;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .login-text a:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 30px 25px;
+      }
+    }
+  </style>
 </head>
 <body>
 
   <nav class="navbar">
     <div class="nav-brand">Prepmate AI</div>
     <ul class="nav-links">
-      <li><a href="home.html">Home</a></li>
+      <li><a href="index.html">Home</a></li>
       <li><a href="practice.html">Practice Hub</a></li>
       <li><a href="mock_test.html">Mock Test</a></li>
     </ul>
   </nav>
 
-  <main class="content">
-    <div class="container" style="max-width: 500px;">
-      <h1>Create Your Account</h1>
-      
-      <form id="signup-form" style="text-align: left;">
-        
-        <label for="username" class="editor-label">Username</label>
-        <input type="text" id="username" class="tool-select" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;" required>
+  <div class="container">
+    <h1>Create Your Account</h1>
+    
+    <form id="signup-form">
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="Enter your username" required />
 
-        <label for="email" class="editor-label">Email</label>
-        <input type="email" id="email" class="tool-select" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;" required>
-        
-        <label for="password" class="editor-label">Password</label>
-        <input type="password" id="password" class="tool-select" style="width: 100%; box-sizing: border-box; margin-bottom: 20px;" required>
-        
-        <div id="message" style="margin-bottom: 15px; text-align: center; display: none;"></div>
-        
-        <button type="submit" id="signup-button" class="tool-button-primary" style="width: 100%;">Create Account</button>
-      
-      </form>
-      
-      <div style="text-align: center; margin-top: 20px;">
-        <p>Already have an account? <a href="login.html" style="color: #38BDF8; text-decoration: none;">Login</a></p>
-      </div>
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="Enter your email" required />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter your password" required />
+
+      <div id="message">Error: Please fill all fields correctly.</div>
+
+      <button type="submit">Create Account</button>
+    </form>
+
+    <div class="login-text">
+      <p>Already have an account? <a href="login.html">Login</a></p>
     </div>
-  </main>
-  
+  </div>
+
   <script src="signup.js"></script>
 </body>
 </html>
