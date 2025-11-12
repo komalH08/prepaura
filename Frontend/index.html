@@ -37,12 +37,12 @@
       text-align: center;
     }
 
-    /* --- Logo Section --- */
+    /* --- Compact Logo Section --- */
     .logo-section {
       background: linear-gradient(180deg, #f5f7fa, #e2e8f0, #dbeafe);
-      border-radius: 20px;
-      padding: 40px 60px;
-      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+      border-radius: 18px;
+      padding: 25px 40px; /* smaller box */
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
       display: inline-block;
       margin-bottom: 40px;
       animation: fadeZoom 1.6s ease-in-out forwards;
@@ -51,8 +51,8 @@
     }
 
     .splash-logo {
-      width: 320px;
-      max-width: 85%;
+      width: 400px; /* increased logo size */
+      max-width: 95%;
       height: auto;
       border-radius: 14px;
       display: block;
@@ -192,7 +192,7 @@
 
     @media (max-width: 600px) {
       .splash-logo {
-        width: 240px;
+        width: 280px;
       }
       .splash-heading {
         font-size: 1.4rem;
@@ -201,7 +201,7 @@
         font-size: 1.6rem;
       }
       .logo-section {
-        padding: 25px 30px;
+        padding: 20px 25px;
       }
     }
   </style>
