@@ -3,22 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Coding Practice - PrepAura AI</title>
+  <title>Technical Coding Practice - PrepAura AI</title>
 
-  <!-- External Styles -->
+  <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="practice-tool.css" />
-
-  <!-- Monaco Editor -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/editor/editor.main.min.css" />
 
   <!-- Particle.js -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <style>
     :root {
-      --glass-bg: rgba(255, 255, 255, 0.08);
-      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-bg: rgba(255,255,255,0.08);
+      --glass-border: rgba(255,255,255,0.12);
       --accent-1: #38bdf8;
       --accent-2: #a78bfa;
       --btn-a: #2563eb;
@@ -43,6 +41,7 @@
       z-index: -1;
     }
 
+    /* Navbar */
     .navbar {
       position: fixed;
       top: 0;
@@ -80,7 +79,9 @@
       transition: color 0.3s ease;
     }
 
-    .nav-links a:hover { color: #fff; }
+    .nav-links a:hover {
+      color: #fff;
+    }
 
     main.content {
       display: flex;
@@ -106,7 +107,7 @@
       background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     p {
@@ -133,28 +134,28 @@
     }
 
     /* Monaco Editor */
-    #editor-container {
+    #code-editor-container {
       width: 100%;
       height: 350px;
       border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.2);
-      background: #0e172a;
-      margin-bottom: 15px;
+      background: #0b1121;
       overflow: hidden;
+      margin-bottom: 20px;
     }
 
-    #output {
+    #output-box {
       width: 100%;
-      height: 160px;
       border-radius: 10px;
       background: #0b1121;
       color: #dbeafe;
       font-family: monospace;
-      text-align: left;
       padding: 12px;
+      text-align: left;
       border: 1px solid rgba(255,255,255,0.15);
       overflow-y: auto;
       white-space: pre-wrap;
+      box-shadow: 0 4px 15px rgba(56,189,248,0.12);
     }
 
     button {
@@ -170,7 +171,6 @@
     .tool-button-primary {
       background: linear-gradient(90deg, var(--btn-a), var(--btn-b));
       color: white;
-      margin: 5px;
     }
 
     .tool-button-primary:hover {
@@ -181,7 +181,6 @@
     .tool-button-danger {
       background: #ef4444;
       color: white;
-      margin: 5px;
     }
 
     .tool-button-danger:hover {
@@ -189,11 +188,21 @@
       background: #dc2626;
     }
 
+    .tool-button-success {
+      background: #22c55e;
+      color: white;
+    }
+
+    .tool-button-success:hover {
+      transform: translateY(-2px);
+      background: #16a34a;
+    }
+
     .hidden { display: none; }
 
     @media (max-width: 700px) {
       .container { padding: 25px; }
-      #editor-container { height: 300px; }
+      #code-editor-container { height: 300px; }
     }
   </style>
 </head>
@@ -213,55 +222,85 @@
       
       <!-- Setup Screen -->
       <div id="setup-screen">
-        <h1>Coding Practice</h1>
-        <p>Select your topic to begin solving coding problems. Test your logic, efficiency, and problem-solving accuracy!</p>
-        <select id="coding-topic" class="tool-select">
-          <option value="Data Structures">Data Structures</option>
-          <option value="Algorithms">Algorithms</option>
-          <option value="String Manipulation">String Manipulation</option>
-          <option value="Math & Logic">Math & Logic</option>
-          <option value="Mixed">Mixed</option>
-        </select>
-        <button id="start-btn" class="tool-button-primary">Start Coding</button>
+        <h1>Technical Coding Practice</h1>
+        <p>Select your language and topic to begin.</p>
+
+        <div class="setup-row">
+          <select id="language-select" class="tool-select">
+            <option value="python">Python</option>
+            <option value="java">Java</option>
+          </select>
+
+          <select id="technical-topic" class="tool-select">
+            <option value="Basic">Basic</option>
+            <option value="Data Structures (Arrays, Strings)">DSA: Arrays & Strings</option>
+            <option value="Data Structures (Linked Lists)">DSA: Linked Lists</option>
+            <option value="Data Structures (Trees, Graphs)">DSA: Trees & Graphs</option>
+            <option value="Algorithms (Sorting, Searching)">DSA: Sorting & Searching</option>
+            <option value="Mix (DSA)">Mix (All DSA Topics)</option>
+          </select>
+        </div>
+
+        <button id="start-btn" class="tool-button-primary">Start Practice</button>
       </div>
 
       <!-- Practice Screen -->
       <div id="practice-screen" class="hidden">
-        <h2 id="question-title">Question:</h2>
-        <div class="question-box" id="question-text">Loading question...</div>
-
-        <div id="editor-container"></div>
-
-        <div class="button-row">
-          <button id="run-btn" class="tool-button-primary">Run Code</button>
-          <button id="next-btn" class="tool-button-primary hidden">Next</button>
-          <button id="solution-btn" class="tool-button-danger hidden">Show Solution</button>
-          <button id="end-btn" class="tool-button-danger">End Practice</button>
+        <div class="stats-bar">
+          <div id="question-counter">Question: 1</div>
+          <div id="question-topic">Topic: ...</div>
+          <div id="question-timer">Time: 0s</div>
         </div>
 
-        <div id="output" class="output-box">Output will appear here...</div>
+        <div class="question-box" id="question-text"></div>
+
+        <div class="run-code-row">
+          <label class="editor-label" id="editor-label">Your Code (Python 3):</label>
+          <button id="run-code-btn" class="tool-button-solution">Run Code</button>
+        </div>
+
+        <div id="code-editor-container"></div>
+
+        <label class="editor-label">Output:</label>
+        <div id="output-box" class="solution-box">
+          Click "Run Code" to see your test case results...
+        </div>
+
+        <div class="solution-button-row">
+          <button id="solution-btn" class="tool-button-success">Show Solution</button>
+        </div>
+
+        <pre id="solution-box" class="solution-box hidden"></pre>
+
+        <div class="nav-button-row">
+          <button id="next-btn" class="tool-button-primary">Next Question</button>
+        </div>
+
+        <div class="button-row">
+          <button id="end-btn" class="tool-button-danger">End Practice</button>
+        </div>
       </div>
 
-      <!-- Feedback Screen -->
-      <div id="feedback-screen" class="hidden">
-        <h2>Your Coding Report</h2>
-        <div class="response-box" id="feedback-report">Generating report...</div>
-        <button id="restart-btn" class="tool-button-primary">Try Another Round</button>
-      </div>
-
-      <!-- Loading Spinner -->
-      <div id="loading-spinner" class="spinner-overlay" style="display:none;">
+      <!-- Loading Spinners -->
+      <div id="loading-spinner" class="spinner-overlay" style="display: none;">
         <div class="spinner"></div>
-        <p>Compiling and testing...</p>
+        <p>Cooking up a new problem...</p>
       </div>
+
+      <div id="running-spinner" class="spinner-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Compiling & Running Code...</p>
+      </div>
+
     </div>
   </main>
 
   <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
   <script src="technical.js"></script>
   <script src="auth.js"></script>
 
-  <!-- Particles Config -->
+  <!-- Particle Config -->
   <script>
     particlesJS("particles-js", {
       particles: {
