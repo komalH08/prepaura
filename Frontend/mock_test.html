@@ -5,102 +5,225 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mock Test - PrepAura AI</title>
 
-  <!-- Keep your project CSS files (unchanged routes) -->
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="practice-tool.css" />
   <link rel="stylesheet" href="managerial.css" />
   <link rel="stylesheet" href="mock_test.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/editor/editor.main.min.css" />
-
-  <!-- Face API (kept) -->
   <script src="face-api.min.js"></script>
-
-  <!-- Particles lib -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <style>
-    :root{
-      --glass-bg: rgba(255,255,255,0.06);
-      --glass-border: rgba(255,255,255,0.10);
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.06);
+      --glass-border: rgba(255, 255, 255, 0.10);
       --accent-1: #38bdf8;
       --accent-2: #a78bfa;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:"Poppins",sans-serif;
-      background: linear-gradient(135deg,#0a192f,#1e3a8a,#1e40af);
-      color:#f5f6fa;
-      min-height:100vh;
-      position:relative;
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #0a192f, #1e3a8a, #1e40af);
+      color: #f5f6fa;
+      min-height: 100vh;
+      position: relative;
     }
 
-    #particles-js{ position:fixed; inset:0; z-index:-1; }
-
-    /* navbar kept minimal — id main-navbar exists and is used by JS */
-    .navbar{
-      position:fixed; top:0; left:0; right:0; height:64px;
-      display:flex; align-items:center; justify-content:space-between;
-      padding:0 24px; background:rgba(255,255,255,0.04);
-      backdrop-filter: blur(12px); border-bottom:1px solid rgba(255,255,255,0.06);
-      z-index:1000;
-    }
-    .nav-brand{
-      font-weight:700; font-size:1.25rem;
-      background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    #particles-js {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
     }
 
-    main.content{ padding: 100px 18px 60px; display:block; }
-
-    .container{
-      max-width:960px; margin: 0 auto; background: var(--glass-bg);
-      border:1px solid var(--glass-border); border-radius:12px;
-      padding:32px; box-shadow:0 12px 40px rgba(2,6,23,0.65);
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      z-index: 1000;
     }
 
-    h1{ font-size:1.9rem; margin:0 0 8px; 
-        background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
-        -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-
-    p.lead{ color:#cbd5e1; margin:8px 0 22px; line-height:1.6; }
-
-    .setup-grid{
-      display:grid; grid-template-columns: 1fr 320px; gap:20px; align-items:start;
-      margin-bottom:18px;
-    }
-    @media(max-width:860px){
-      .setup-grid{ grid-template-columns: 1fr; }
+    .nav-brand {
+      font-weight: 700;
+      font-size: 1.25rem;
+      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .resume-uploader{
-      text-align:center; border:1px dashed rgba(255,255,255,0.18);
-      padding:18px; border-radius:10px; background: rgba(255,255,255,0.03);
-    }
-    .resume-uploader label{ display:block; font-weight:600; margin-bottom:8px; color:#dbeafe; }
-    .resume-uploader input[type="file"]{ margin-top:10px; background:rgba(255,255,255,0.06); color:#cbd5e1; padding:8px; border-radius:6px; border:none; }
-
-    .language-select-box{ padding:18px; border-radius:10px; background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02); }
-
-    .language-select-box label{ display:block; color:#dbeafe; font-weight:600; margin-bottom:8px; }
-    .tool-select{ width:100%; padding:10px 12px; border-radius:8px; border:none; background:rgba(255,255,255,0.06); color:#e6eef9; }
-
-    .button-row{
-      display:flex; gap:14px; justify-content:center; margin-top:12px; flex-wrap:wrap;
-    }
-    .tool-button-primary{
-      background: linear-gradient(90deg,#2563eb,#1d4ed8); color:#fff; border:none;
-      padding:12px 22px; border-radius:8px; font-weight:700; cursor:pointer;
-    }
-    .tool-button-primary[disabled]{ opacity:0.55; cursor:not-allowed; transform:none; }
-    .tool-button-secondary{
-      background: rgba(255,255,255,0.10); border:1px solid rgba(255,255,255,0.08);
-      padding:12px 18px; color:#f1f5f9; border-radius:8px; cursor:pointer;
+    main.content {
+      padding: 100px 18px 60px;
     }
 
-    .spinner-overlay{ display:none; margin-top:18px; text-align:center; color:#93c5fd; }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 12px 40px rgba(2,6,23,0.65);
+    }
 
-    footer{ text-align:center; color:#94a3b8; font-size:0.9rem; padding:18px 0; margin-top:20px; }
+    h1 {
+      font-size: 1.9rem;
+      margin: 0 0 8px;
+      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.lead {
+      color: #cbd5e1;
+      margin: 8px 0 22px;
+      line-height: 1.6;
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 20px;
+      align-items: start;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 860px) {
+      .setup-grid { grid-template-columns: 1fr; }
+    }
+
+    .resume-uploader {
+      text-align: center;
+      border: 1px dashed rgba(255,255,255,0.18);
+      padding: 18px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .resume-uploader label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #dbeafe;
+    }
+
+    .resume-uploader input[type="file"] {
+      margin-top: 10px;
+      background: rgba(255,255,255,0.08);
+      color: #f8fafc;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.15);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .resume-uploader input[type="file"]:hover {
+      border-color: #60a5fa;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .language-select-box {
+      padding: 18px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .language-select-box label {
+      display: block;
+      color: #dbeafe;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    /* Updated Dropdown Style */
+    .tool-select {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08);
+      color: #f8fafc;
+      font-weight: 500;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.25s ease;
+      appearance: none;
+      background-image: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    }
+
+    .tool-select:hover {
+      border-color: #60a5fa;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .tool-select:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 2px rgba(56,189,248,0.25);
+    }
+
+    .tool-select option {
+      background: #0a192f;
+      color: #f8fafc;
+      border: none;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .tool-button-primary {
+      background: linear-gradient(90deg, #2563eb, #1d4ed8);
+      color: #fff;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tool-button-primary[disabled] {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .tool-button-secondary {
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 12px 18px;
+      color: #f1f5f9;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .spinner-overlay {
+      display: none;
+      margin-top: 18px;
+      text-align: center;
+      color: #93c5fd;
+    }
+
+    footer {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      padding: 18px 0;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -114,25 +237,21 @@
 
   <main class="content" id="mock-test-container">
     <div class="container">
-
       <div id="setup-screen">
         <h1>Final Mock Test</h1>
-        <p class="lead">This is a proctored, full-length mock test combining Aptitude, Communication, Coding and Live Interview rounds. The test will run fullscreen — do not switch tabs.</p>
+        <p class="lead">This is a proctored, full-length mock test combining Aptitude, Communication, Coding, and Live Interview rounds. The test will run fullscreen — do not switch tabs.</p>
 
         <div class="setup-grid">
-          <!-- STEP 1 (must keep id="resume-upload") -->
           <div class="resume-uploader" aria-label="resume uploader">
             <label for="resume-upload">Step 1 — Upload Resume (optional)</label>
             <input type="file" id="resume-upload" accept=".pdf" />
             <div style="margin-top:12px;">
-              <!-- These buttons MUST match mock_test.js -->
               <button id="upload-btn" class="tool-button-primary" style="margin-right:10px;">Upload</button>
               <button id="skip-resume-btn" class="tool-button-secondary">Skip</button>
             </div>
             <div id="resume-status" style="margin-top:10px; color:#93c5fd; font-size:.95rem;"></div>
           </div>
 
-          <!-- STEP 2 (language) -->
           <div class="language-select-box">
             <label for="language-select">Step 2 — Select Coding Language</label>
             <select id="language-select" class="tool-select">
@@ -142,17 +261,14 @@
           </div>
         </div>
 
-        <!-- start button expected by mock_test.js -->
         <div style="text-align:center;">
           <button id="start-test-btn" class="tool-button-primary" disabled>Start Mock Test</button>
         </div>
-
       </div>
 
-      <!-- READY SCREEN (kept hidden initially) -->
       <div id="ready-screen" class="hidden" style="margin-top:18px;">
-        <h2 style="margin-top:0">Test Structure</h2>
-        <p class="lead" style="margin-bottom:12px;">Your mock test runs sequentially and will begin in fullscreen. Leaving the tab multiple times will trigger warnings.</p>
+        <h2>Test Structure</h2>
+        <p class="lead">Your mock test runs sequentially and will begin in fullscreen. Leaving the tab multiple times will trigger warnings.</p>
         <ul style="text-align:left; color:#dbeafe; max-width:700px; margin:0 auto 8px;">
           <li>Round 1 — Aptitude (timed)</li>
           <li>Round 2 — Communication (1 min)</li>
@@ -164,18 +280,15 @@
         </div>
       </div>
 
-      <!-- Test environment (filled by JS) -->
       <div id="test-environment" class="hidden" style="margin-top:18px;">
         <div class="proctor-header" style="display:flex; gap:18px; justify-content:space-between; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px;">
           <div><strong>Round:</strong> <span id="round-name">Aptitude</span></div>
           <div><strong>Time Left:</strong> <span id="master-timer">30:00</span></div>
           <div><strong>Warnings:</strong> <span id="warning-count">0 / 3</span></div>
         </div>
-
         <div id="round-content" style="margin-top:16px;"></div>
       </div>
 
-      <!-- Final report screen -->
       <div id="report-screen" class="hidden" style="margin-top:18px;">
         <h2>Mock Test Final Report</h2>
         <div id="final-report-box" class="response-box">Generating your comprehensive report...</div>
@@ -188,18 +301,15 @@
         <div class="spinner"></div>
         <p>Preparing your AI interview environment...</p>
       </div>
-
     </div>
   </main>
 
   <footer>© 2025 PrepAura AI — Designed with 💙 by Vicchu</footer>
 
-  <!-- KEEP your mock_test.js and auth.js (unchanged) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
   <script src="mock_test.js"></script>
   <script src="auth.js"></script>
 
-  <!-- Particles (interactive: grab + repulse) -->
   <script>
     particlesJS("particles-js", {
       particles: {
@@ -233,10 +343,13 @@
       retina_detect: true
     });
 
-    // subtle fade-in for the container (visual nicety)
     document.addEventListener("DOMContentLoaded", () => {
       const c = document.querySelector(".container");
-      if (c) { c.style.opacity = 0; setTimeout(()=> c.style.transition = "opacity .6s ease", 10); setTimeout(()=> c.style.opacity = 1, 30); }
+      if (c) {
+        c.style.opacity = 0;
+        setTimeout(() => (c.style.transition = "opacity .6s ease"), 10);
+        setTimeout(() => (c.style.opacity = 1), 30);
+      }
     });
   </script>
 </body>
