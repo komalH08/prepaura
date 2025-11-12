@@ -148,24 +148,28 @@
       background: #1e3a8a;
     }
 
-    /* ✅ Updated loader background & text for better visibility */
+    /* ✅ Perfect Loader Fix */
     #round-content.loading {
-      background: rgba(10, 25, 47, 0.92);
-      border-radius: 16px;
-      padding: 60px 20px;
+      background: rgba(11, 18, 37, 0.85);
+      border-radius: 14px;
+      padding: 70px 30px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      min-height: 260px;
+      transition: background 0.3s ease-in-out;
     }
 
     .loading-text {
       font-size: 1.2rem;
       font-weight: 600;
-      color: #e2e8f0 !important; /* Bright readable text */
+      color: #ffffff !important;
       text-align: center;
-      text-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
-      margin-top: 16px;
+      text-shadow:
+        0 0 8px rgba(56, 189, 248, 0.6),
+        0 0 16px rgba(56, 189, 248, 0.3);
+      margin-top: 18px;
     }
 
     .tool-button-primary {
