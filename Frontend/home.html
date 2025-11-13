@@ -149,7 +149,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 380px; /* ✅ Equal height */
+      min-height: 380px;
       transition: transform 0.28s ease, border-color 0.28s ease, opacity 0.9s ease;
       opacity: 0;
       transform: translateY(30px);
@@ -162,7 +162,7 @@
 
     .feature-box:hover {
       transform: translateY(-6px);
-      border-color: rgba(56,189,248,0.45); /* Only border color change */
+      border-color: rgba(56,189,248,0.45);
     }
 
     .feature-box h2 {
@@ -232,14 +232,15 @@
     }
   </style>
 </head>
+
 <body>
   <div id="particles-js"></div>
 
   <nav class="navbar">
     <div class="nav-brand">PrepAura AI</div>
-    <ul class="nav-links" id="nav-links">
-      <!-- links will be rendered by JS -->
-    </ul>
+
+    <!-- IMPORTANT FIX: auth.js expects THIS ID EXACTLY -->
+    <ul class="nav-links" id="nav-links-list"></ul>
   </nav>
 
   <main class="main">
@@ -247,41 +248,45 @@
     <p>Experience AI-powered, proctored interview preparation across every round — practice, analyze, and improve like never before.</p>
 
     <div class="box-container">
-      <div class="feature-box" id="practice-card">
+
+      <!-- Practice Hub -->
+      <div class="feature-box">
         <div>
           <h2>🧩 Practice Hub</h2>
-          <p>Master each round individually with real-time AI feedback and performance analytics.</p>
+          <p>Sharpen every interview round with focused, AI-powered practice.</p>
 
           <ul>
-            <li><strong>⏱️ Aptitude – Timed & focused:</strong> adaptive difficulty, per-question timer, instant correctness, and optional step-by-step solution view after attempt.</li>
-            <li><strong>🗣️ Communication – Speak & improve:</strong> voice clarity, pace, filler-word detection and facial-expression cues with time-stamped recommendations.</li>
-            <li><strong>💻 Coding – Run & validate:</strong> Monaco editor, sample + hidden testcases, resource (time/memory) hints and AI-suggested optimizations.</li>
-            <li><strong>👔 Managerial & HR – Scenario practice:</strong> behavioral prompts, STAR-based feedback, tone & empathy scoring, and suggested improved responses.</li>
-            <li><strong>📄 Resume Q&A – Personalized mock:</strong> AI extracts probable interview questions from your resume and simulates a short Q&A with scoring.</li>
+            <li>⏱️ Aptitude – Timed MCQs with instant results</li>
+            <li>🗣️ Communication – Voice & facial cue analysis</li>
+            <li>💻 Coding – Monaco editor + testcase validation</li>
+            <li>👔 HR & Managerial – Scenario-based Q&A</li>
+            <li>📄 Resume Q&A – Auto-generated personalised questions</li>
           </ul>
         </div>
         <div class="feature-actions">
-          <a href="practice.html" id="go-practice">Go to Practice Hub</a>
+          <a href="practice.html">Go to Practice Hub</a>
         </div>
       </div>
 
-      <div class="feature-box" id="mock-card">
+      <!-- Mock Test -->
+      <div class="feature-box">
         <div>
           <h2>🎯 Mock Test</h2>
-          <p>Simulate a full AI-proctored interview — from aptitude to HR — all in one automated session with a consolidated report.</p>
+          <p>Take a full proctored interview simulation with AI scoring.</p>
 
           <ul>
-            <li><strong>🧠 End-to-end flow:</strong> Aptitude → Communication → HR → Coding → Managerial → Resume Q&A with configurable timings.</li>
-            <li><strong>🎥 Proctoring:</strong> continuous webcam & mic monitoring for behaviour analysis and replayable session logs (privacy controlled).</li>
-            <li><strong>📊 Live evaluation:</strong> real-time emotion & voice scoring, coding testcase pass rate, and time-utilization metrics.</li>
-            <li><strong>📃 Final consolidated report:</strong> per-round scores, top 3 improvement actions, and suggested practice plan.</li>
-            <li><strong>🔁 Retry & compare:</strong> save past mock results and compare trends to track progress over time.</li>
+            <li>🧠 6-round structured flow</li>
+            <li>🎥 Live proctoring (webcam + mic)</li>
+            <li>📊 Real-time voice & emotion scoring</li>
+            <li>💻 Coding with hidden testcases</li>
+            <li>📃 Final performance report</li>
           </ul>
         </div>
         <div class="feature-actions">
-          <a href="mock_test.html" id="start-mock">Start Mock Test</a>
+          <a href="mock_test.html">Start Mock Test</a>
         </div>
       </div>
+
     </div>
   </main>
 
@@ -290,117 +295,10 @@
   <script src="auth.js"></script>
 
   <script>
-    // -------------- NAVBAR LOGIC --------------
-    // This function tries several common localStorage/sessionStorage keys to determine a logged-in user.
-    function getLoggedInUser() {
-      try {
-        // 1) check common 'user' JSON saved in localStorage
-        const u1 = localStorage.getItem('user') || sessionStorage.getItem('user');
-        if (u1) {
-          try { const parsed = JSON.parse(u1); if (parsed && (parsed.name || parsed.username)) return parsed.name || parsed.username; } catch(e){ }
-        }
-        // 2) check specific username keys
-        const u2 = localStorage.getItem('username') || sessionStorage.getItem('username');
-        if (u2) return u2;
-        // 3) check email/name tokens
-        const u3 = localStorage.getItem('name') || sessionStorage.getItem('name');
-        if (u3) return u3;
-        // 4) check token-user combos (some backends store user in 'authUser' or 'prepaura_user')
-        const u4 = localStorage.getItem('authUser') || sessionStorage.getItem('authUser') || localStorage.getItem('prepaura_user');
-        if (u4) {
-          try { const parsed = JSON.parse(u4); if (parsed && (parsed.name||parsed.username)) return parsed.name || parsed.username; } catch(e) { return u4; }
-        }
-        // nothing
-        return null;
-      } catch (err) {
-        return null;
-      }
-    }
-
-    function logoutAndReload() {
-      // remove common keys (non-destructive attempt)
-      const keys = ['token','authToken','user','username','name','authUser','prepaura_user','session'];
-      keys.forEach(k => { localStorage.removeItem(k); sessionStorage.removeItem(k); });
-      // call any auth.js logout function if present
-      if (typeof window.logout === 'function') {
-        try { window.logout(); } catch(e) {}
-      }
-      // reload to refresh UI
-      window.location.reload();
-    }
-
-    function buildNav() {
-      const nav = document.getElementById('nav-links');
-      nav.innerHTML = ''; // clear
-
-      // Always show Home, Practice Hub, Mock Test
-      const links = [
-        { text: 'Home', href: 'home.html' },
-        { text: 'Practice Hub', href: 'practice.html' },
-        { text: 'Mock Test', href: 'mock_test.html' },
-      ];
-
-      links.forEach(it => {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.href = it.href;
-        a.innerText = it.text;
-        // ensure Home always opens home.html (not index)
-        a.addEventListener('click', function(e){
-          // standard navigation; allow default
-        });
-        li.appendChild(a);
-        nav.appendChild(li);
-      });
-
-      const username = getLoggedInUser();
-      if (username) {
-        // show username pill and logout
-        const userLi = document.createElement('li');
-        const userSpan = document.createElement('span');
-        userSpan.className = 'nav-user';
-        userSpan.innerText = username.length > 16 ? username.slice(0,14)+'…' : username;
-        userLi.appendChild(userSpan);
-        nav.appendChild(userLi);
-
-        const logoutLi = document.createElement('li');
-        const logoutA = document.createElement('a');
-        logoutA.href = '#';
-        logoutA.innerText = 'Logout';
-        logoutA.addEventListener('click', function(e){
-          e.preventDefault();
-          logoutAndReload();
-        });
-        logoutLi.appendChild(logoutA);
-        nav.appendChild(logoutLi);
-      } else {
-        // show Login / Signin
-        const loginLi = document.createElement('li');
-        const loginA = document.createElement('a');
-        loginA.href = 'login.html';
-        loginA.innerText = 'Login / Signin';
-        loginLi.appendChild(loginA);
-        nav.appendChild(loginLi);
-      }
-    }
-
-    // Build nav immediately
-    buildNav();
-
-    // If auth.js triggers events we want to re-render nav after login - listen for storage changes
-    window.addEventListener('storage', function(e){
-      // re-render when auth-related keys change
-      if (['user','username','authUser','token','prepaura_user'].includes(e.key)) buildNav();
-    });
-
-    // -------------- PARTICLES --------------
-    // Use detect_on: "window" to ensure cursor interaction works even when canvas is behind content
     particlesJS("particles-js", {
       particles: {
         number: { value: 80, density: { enable: true, value_area: 900 } },
         color: { value: "#38bdf8" },
-        shape: { type: "circle" },
-        opacity: { value: 0.5 },
         size: { value: 3.5, random: true },
         line_linked: {
           enable: true,
@@ -409,29 +307,22 @@
           opacity: 0.4,
           width: 1.2
         },
-        move: {
-          enable: true,
-          speed: 2.2,
-          direction: "none",
-          out_mode: "out"
-        }
+        move: { enable: true, speed: 2.2 }
       },
       interactivity: {
         detect_on: "window",
         events: {
           onhover: { enable: true, mode: "grab" },
-          onclick: { enable: true, mode: "repulse" },
-          resize: true
+          onclick: { enable: true, mode: "repulse" }
         },
         modes: {
           grab: { distance: 180, line_linked: { opacity: 0.8 } },
           repulse: { distance: 140, duration: 0.4 }
         }
-      },
-      retina_detect: true
+      }
     });
 
-    // -------------- VISIBILITY ANIMATIONS --------------
+    // Animation
     const boxes = document.querySelectorAll(".feature-box");
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
