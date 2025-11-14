@@ -267,18 +267,14 @@
 
   <script>
     particlesJS("particles-js", {
-      particles: {
-        number: { value: 80, density: { enable: true, value_area: 900 } },
-        color: { value: "#38bdf8" },
-        size: { value: 3.5, random: true },
-        line_linked: {
-          enable: true,
-          distance: 150,
-          color: "#60a5fa",
-          opacity: 0.4,
-          width: 1.2
-        },
-        move: { enable: true, speed: 2.2 }
+      "particles": {
+        "number": { "value": 85 },
+        "color": { "value": "#38bdf8" },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.5 },
+        "size": { "value": 3 },
+        "line_linked": { "enable": true, "distance": 150, "color": "#60a5fa", "opacity": 0.4, "width": 1 },
+        "move": { "enable": true, "speed": 2.2, "out_mode": "bounce" }
       },
       interactivity: {
         detect_on: "window",
@@ -293,7 +289,6 @@
       },
       retina_detect: true
     });
-
     const features = document.querySelectorAll(".feature-box");
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
