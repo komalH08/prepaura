@@ -48,11 +48,13 @@
 
     /* CLEAN TEXT LOGO (no background box) */
     .logo-section {
+      margin-top: 60px;
       margin-bottom: 40px;
       text-align: center;
       padding: 10px 20px;
     }
 
+    /* main brand title with animation + underline */
     .brand-title {
       font-size: 3.6rem;
       font-weight: 800;
@@ -60,16 +62,72 @@
       text-align: center;
       margin: 0;
       letter-spacing: 1.5px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: logoFadeUp 1s ease-out forwards;
     }
 
+    .brand-title::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -12px;
+      transform: translateX(-50%);
+      width: 0;
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.85);
+      box-shadow: 0 0 16px rgba(148, 163, 255, 0.6);
+      animation: underlineGrow 0.7s ease-out forwards;
+      animation-delay: 0.55s;
+    }
+
+    /* tagline with slight delay for staggered feel */
     .brand-tagline {
-      margin-top: 12px;
+      margin-top: 22px;
       font-size: 1.2rem;
       font-weight: 400;
       color: #e2e8f0;
       text-align: center;
-      opacity: 0.95;
+      opacity: 0;
       letter-spacing: 0.4px;
+      transform: translateY(10px);
+      animation: taglineFadeUp 0.9s ease-out forwards;
+      animation-delay: 0.35s;
+    }
+
+    @keyframes logoFadeUp {
+      0% {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes taglineFadeUp {
+      0% {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes underlineGrow {
+      0% {
+        width: 0;
+        opacity: 0;
+      }
+      100% {
+        width: 160px; /* adjust if you want shorter/longer line */
+        opacity: 1;
+      }
     }
 
     h1 {
@@ -193,6 +251,12 @@
       .feature-item {
         min-height: 420px;
       }
+      .brand-title {
+        font-size: 2.6rem;
+      }
+      .brand-tagline {
+        font-size: 1.05rem;
+      }
     }
 
   </style>
@@ -201,10 +265,13 @@
 
   <div id="particles-js"></div>
 
-  <!-- NEW TEXT LOGO -->
+  <!-- NEW TEXT LOGO WITH ANIMATION -->
   <div class="logo-section">
     <h1 class="brand-title">PrepAura AI</h1>
-    <p class="brand-tagline">Turn Interview Anxiety, To AI-Driven Clarity</p>
+    <p class="brand-tagline">
+      Turn Interview Anxiety,<br />
+      To AI-Driven Clarity
+    </p>
   </div>
 
   <div class="container splash-content">
@@ -320,8 +387,6 @@
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <script>
-    /* Use detect_on: "window" so particles respond to mouse even though the canvas is behind content.
-       This avoids pointer-event conflicts and ensures hover & click effects work. */
     particlesJS("particles-js", {
       particles: {
         number: { value: 80, density: { enable: true, value_area: 900 } },
@@ -344,7 +409,7 @@
         }
       },
       interactivity: {
-        detect_on: "window",   // <--- important: use "window" so cursor is tracked even if canvas is behind elements
+        detect_on: "window",
         events: {
           onhover: { enable: true, mode: "grab" },
           onclick: { enable: true, mode: "repulse" },
