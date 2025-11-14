@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aptitude Practice - Prepmate AI</title>
+  <title>Aptitude Practice - PrepAura AI</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="practice-tool.css" />
 
@@ -24,15 +24,101 @@
       background: linear-gradient(135deg, #0a1626, #102a5a, #16327a);
     }
 
+    /* ---------------- MY NAV BAR STYLE ---------------- */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      z-index: 1000;
+    }
+
+    .nav-brand {
+      font-weight: 700;
+      font-size: 1.4rem;
+      background: linear-gradient(90deg, #38bdf8, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: #dbeafe;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 6px;
+      letter-spacing: 0.2px;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+      text-shadow: 0 0 6px rgba(255,255,255,0.3);
+    }
+
+    .nav-user {
+      color: #ffffff;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.08);
+      box-shadow: 0 0 8px rgba(255,255,255,0.15);
+    }
+
+    .nav-logout {
+      background: #ff3b43 !important;
+      color: #ffffff !important;
+      padding: 8px 12px !important;
+      border-radius: 6px;
+      font-weight: 700 !important;
+      box-shadow: 0 0 6px rgba(255,0,0,0.25);
+    }
+    .nav-logout:hover {
+      background: #b81010 !important;
+    }
+    /* --------------------------------------------------- */
+
+    /* Back Button */
+    .back-btn {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 10px 16px;
+      border-radius: 10px;
+      margin: 20px 0 10px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    .back-btn:hover {
+      background: rgba(255,255,255,0.22);
+    }
+
     .container {
       background: var(--glass-bg) !important;
       border: 1px solid var(--glass-border) !important;
       box-shadow: 0 8px 25px rgba(0,0,0,0.4);
       border-radius: 16px !important;
       backdrop-filter: blur(12px) !important;
+      margin-top: 110px;
     }
 
-    /* Question box glassmorphic glow */
     .question-box {
       background: rgba(255, 255, 255, 0.07);
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -50,7 +136,6 @@
       box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35);
     }
 
-    /* Re-align buttons neatly */
     .nav-button-row,
     .solution-button-row,
     .button-row {
@@ -60,15 +145,6 @@
       flex-wrap: wrap;
       gap: 12px;
       margin-top: 15px;
-    }
-
-    /* Center Show Solution neatly below */
-    .solution-button-row {
-      margin-top: 10px;
-    }
-
-    #solution-btn {
-      min-width: 180px;
     }
 
     .stats-bar {
@@ -83,29 +159,32 @@
       border: 1px solid rgba(255,255,255,0.1);
     }
 
-    /* Subtle fade-in animation for transitions */
     .fade-in { opacity: 0; transform: translateY(10px); transition: opacity .5s, transform .4s; }
     .fade-in.show { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 
 <body>
-  <!-- 🔮 Particle Background -->
+
   <div id="particles-js"></div>
 
-  <!-- 🌐 Navbar -->
+  <!-- MY NAV BAR STYLE -->
   <nav class="navbar">
-    <div class="nav-brand">Prepmate AI</div>
+    <div class="nav-brand">PrepAura AI</div>
     <ul class="nav-links" id="nav-links-list"></ul>
   </nav>
 
   <main class="content">
     <div class="container">
 
+      <!-- BACK BUTTON AT START -->
+      <button class="back-btn" onclick="location.href='practice.html'">⬅ Back to Practice Hub</button>
+
       <!-- Setup Screen -->
       <div id="setup-screen" class="fade-in show">
         <h1>Aptitude Practice</h1>
         <p>Select a topic to begin your practice session.</p>
+
         <select id="aptitude-topic" class="tool-select">
           <option value="Quantitative Aptitude">Quantitative Aptitude</option>
           <option value="Logical Reasoning">Logical Reasoning</option>
@@ -113,6 +192,7 @@
           <option value="Data Interpretation">Data Interpretation</option>
           <option value="Mix">Mix (All Topics)</option>
         </select>
+
         <button id="start-btn" class="tool-button-primary">Start Practice</button>
       </div>
 
@@ -150,7 +230,11 @@
       <div id="feedback-screen" class="hidden fade-in">
         <h2>Practice Report</h2>
         <div class="response-box" id="feedback-report">Generating your feedback...</div>
+
         <button id="restart-btn" class="tool-button-primary">Practice Again</button>
+
+        <!-- BACK BUTTON AT END -->
+        <button class="back-btn" onclick="location.href='practice.html'">⬅ Back to Practice Hub</button>
       </div>
 
       <div id="loading-spinner" class="spinner-overlay" style="display: none;">
@@ -164,7 +248,7 @@
   <script src="aptitude.js"></script>
   <script src="auth.js"></script>
 
-  <!-- 🎇 Particles Config (same as practice.html) -->
+  <!-- Particles -->
   <script>
     particlesJS("particles-js", {
       particles: {
@@ -205,7 +289,9 @@
     const io = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
     }, { threshold: 0.15 });
+
     fadeEls.forEach(el => io.observe(el));
   </script>
+
 </body>
 </html>
