@@ -94,20 +94,28 @@
     }
     /* --------------------------------------------------- */
 
-    /* Back Button */
+    /* FIXED BOTTOM BACK BUTTON */
     .back-btn {
-      background: rgba(255,255,255,0.12);
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.14);
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 10px 16px;
-      border-radius: 10px;
-      margin: 20px 0 10px;
-      font-size: 0.95rem;
+      border: 1px solid rgba(255,255,255,0.25);
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 1rem;
       cursor: pointer;
-      transition: 0.2s ease;
+      backdrop-filter: blur(8px);
+      transition: 0.25s ease;
+      z-index: 2000;
     }
     .back-btn:hover {
       background: rgba(255,255,255,0.22);
+    }
+    .hidden-btn {
+      display: none !important;
     }
 
     .container {
@@ -174,11 +182,13 @@
     <ul class="nav-links" id="nav-links-list"></ul>
   </nav>
 
+  <!-- SINGLE BACK BUTTON (will hide/show via JS) -->
+  <button id="back-btn" class="back-btn" onclick="location.href='practice.html'">
+    ⬅ Back to Practice Hub
+  </button>
+
   <main class="content">
     <div class="container">
-
-      <!-- BACK BUTTON AT START -->
-      <button class="back-btn" onclick="location.href='practice.html'">⬅ Back to Practice Hub</button>
 
       <!-- Setup Screen -->
       <div id="setup-screen" class="fade-in show">
@@ -232,9 +242,6 @@
         <div class="response-box" id="feedback-report">Generating your feedback...</div>
 
         <button id="restart-btn" class="tool-button-primary">Practice Again</button>
-
-        <!-- BACK BUTTON AT END -->
-        <button class="back-btn" onclick="location.href='practice.html'">⬅ Back to Practice Hub</button>
       </div>
 
       <div id="loading-spinner" class="spinner-overlay" style="display: none;">
@@ -247,6 +254,32 @@
 
   <script src="aptitude.js"></script>
   <script src="auth.js"></script>
+
+  <!-- Back Button Logic -->
+  <script>
+    const backBtn = document.getElementById("back-btn");
+    const setupScreen = document.getElementById("setup-screen");
+    const practiceScreen = document.getElementById("practice-screen");
+    const feedbackScreen = document.getElementById("feedback-screen");
+
+    // Show only on setup initially
+    backBtn.classList.remove("hidden-btn");
+
+    // Hide during practice
+    document.getElementById("start-btn").addEventListener("click", () => {
+      backBtn.classList.add("hidden-btn");
+    });
+
+    // Show again after ending practice
+    document.getElementById("end-btn").addEventListener("click", () => {
+      setTimeout(() => backBtn.classList.remove("hidden-btn"), 300);
+    });
+
+    // Hide when restarting
+    document.getElementById("restart-btn").addEventListener("click", () => {
+      backBtn.classList.add("hidden-btn");
+    });
+  </script>
 
   <!-- Particles -->
   <script>
@@ -264,11 +297,7 @@
           opacity: 0.4,
           width: 1.2
         },
-        move: {
-          enable: true,
-          speed: 2.2,
-          out_mode: "out"
-        }
+        move: { enable: true, speed: 2.2, out_mode: "out" }
       },
       interactivity: {
         detect_on: "canvas",
