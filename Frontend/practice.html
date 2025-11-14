@@ -40,7 +40,7 @@
       background-attachment: fixed;
     }
 
-    /* --- Navbar --- */
+    /* --- Navbar (Your Saved Style) --- */
     .navbar {
       position: fixed;
       top: 0;
@@ -69,17 +69,47 @@
       gap: 25px;
       margin: 0;
       padding: 0;
+      align-items: center;
     }
 
+    /* Bold stylish nav buttons */
     .nav-links a {
       text-decoration: none;
       color: #dbeafe;
-      font-weight: 500;
-      transition: color 0.3s ease;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 6px;
+      letter-spacing: 0.2px;
+      transition: 0.3s ease;
     }
 
     .nav-links a:hover {
-      color: #93c5fd;
+      color: #fff;
+      text-shadow: 0 0 6px rgba(255,255,255,0.3);
+    }
+
+    /* Premium username pill */
+    .nav-user-info {
+      color: #ffffff;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.08);
+      box-shadow: 0 0 8px rgba(255,255,255,0.15);
+    }
+
+    /* Red Logout button */
+    .nav-button-logout {
+      background: #ff3b43 !important;
+      color: #ffffff !important;
+      padding: 8px 12px !important;
+      border-radius: 6px;
+      font-weight: 700 !important;
+      box-shadow: 0 0 6px rgba(255,0,0,0.25);
+    }
+
+    .nav-button-logout:hover {
+      background: #ff1f1f !important;
     }
 
     /* --- Hero Section --- */
@@ -195,15 +225,10 @@
   <!-- 🔮 Particle Background -->
   <div id="particles-js"></div>
 
-  <!-- 🌐 Navigation -->
+  <!-- 🌐 Navigation (Updated to your style + dynamic via auth.js) -->
   <nav class="navbar">
     <div class="nav-brand">PrepAura AI</div>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="practice.html">Practice Hub</a></li>
-      <li><a href="mock_test.html">Mock Test</a></li>
-      <li><a href="login.html">Logout</a></li>
-    </ul>
+    <ul class="nav-links" id="nav-links-list"></ul>
   </nav>
 
   <!-- 🌟 Hero Section -->
