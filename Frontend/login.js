@@ -31,9 +31,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const data = await response.json();
             if (response.ok) {
-                // Success! Redirect to the home page
-                alert("Login successful! Welcome, " + data.username);
-                window.location.href = "home.html";
+                if (response.ok) {
+
+                    // Show AI Futuristic Success Popup
+                    const box = document.getElementById("success-box");
+                    box.innerHTML = `
+                        <div class="success-icon">✔</div>
+                        <p>Welcome, ${data.username}</p>
+                    `;
+                    box.classList.add("show");
+
+                    // Redirect after animation
+                    setTimeout(() => {
+                        window.location.href = "home.html";
+                    }, 1800);
+    
+                }
+
             } else {
                 // Show the error from the server
                 errorMessage.innerText = `Error: ${data.error}`;
