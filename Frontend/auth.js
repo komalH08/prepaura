@@ -17,17 +17,34 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: { "Content-Type": "application/json" },
                 credentials: 'include',
             });
-            
-            if (response.ok) {
-                alert("You have been logged out.");
-                window.location.href = "login.html"; // Redirect to login page
+             if (response.ok) {
+
+                // 🔥 NEW POPUP LOGOUT ANIMATION
+                const popup = document.getElementById("logout-success");
+
+                if (popup) {
+                    popup.classList.remove("hidden");
+                    setTimeout(() => popup.classList.add("show"), 50);
+
+                    // Redirect after animation
+                    setTimeout(() => {
+                        window.location.href = "login.html";
+                    }, 1500);
+
+                } else {
+                    // fallback if popup missing
+                    window.location.href = "login.html";
+                }
             }
+
         } catch (error) {
             console.error("Logout failed:", error);
+
+            // OPTIONAL: You can add an error-popup here too
             alert("Logout failed. Could not connect to server.");
         }
     };
-
+    
     // Function to check the session and update the navbar
     const checkUserSession = async () => {
         try {
