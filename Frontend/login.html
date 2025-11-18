@@ -178,22 +178,23 @@ button:hover {
   }
 }
 
+/* AI Futuristic Success Popup */
 /* Unified Popup Animation for Login + Logout */
 .success-popup {
   position: fixed;
-  top: -140px;
+  top: -150px;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(18px);
   border: 1px solid rgba(255,255,255,0.15);
   border-radius: 16px;
-  padding: 18px 32px;
+  padding: 22px 36px;
   width: fit-content;
   text-align: center;
   
   /* Softer glow (fixes navbar bleeding glow issue) */
-  box-shadow: 0 0 25px rgba(59,130,246,0.25);
+  box-shadow: 0 0 14px rgba(59,130,246,0.25);
 
   color: #e0f2ff;
   font-size: 1.15rem;
@@ -202,13 +203,13 @@ button:hover {
   opacity: 0;
 
   /* Smoother animation – matches logout perfectly */
-  transition: all 0.6s ease, opacity 0.6s ease;
+  transition: top 0.6s ease, opacity 0.6s ease;
 
-  z-index: 9999;  /* higher so nav-bar never overlays it */
+  z-index: 2000;  /* higher so nav-bar never overlays it */
 }
 
 .success-popup.show {
-  top: 80px;
+  top: 90px;
   opacity: 1;
 }
 
@@ -218,6 +219,7 @@ button:hover {
   color: #4ade80;
   text-shadow: 0 0 18px rgba(74,222,128,0.8);
 }
+
 
 .hidden {
   display: none;
