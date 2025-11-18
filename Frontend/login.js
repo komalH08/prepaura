@@ -40,7 +40,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="success-icon">✔</div>
                         <p>Welcome, ${data.username}</p>
                     `;
-                    box.classList.add("show");
+
+                    // 🔥 The important fix
+                    setTimeout(() => {
+                        box.classList.add("show");
+                    }, 30);
 
                     // Redirect after animation
                     setTimeout(() => {

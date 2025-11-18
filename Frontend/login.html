@@ -124,8 +124,10 @@ input {
 }
 
 input:focus {
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid #3b82f6;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  outline: 2px solid rgba(56, 189, 248, 0.6); /* soft cyan */
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.4); /* subtle, does NOT leak upward */
 }
 
 #error-message {
