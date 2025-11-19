@@ -221,6 +221,28 @@
 
     .fade-in { opacity: 0; transform: translateY(10px); transition: opacity .5s, transform .4s; }
     .fade-in.show { opacity: 1; transform: translateY(0); }
+  
+    select::-internal-list-box {
+    background-color: transparent !important;
+    }
+
+    select option {
+    background-color: #0a1530 !important;   /* dark dropdown */
+    color: #dbeafe !important;              /* readable text */
+}
+
+select option:hover {
+    background-color: #1e3a8a !important;   /* blue hover */
+    color: #ffffff !important;
+}
+
+select option:checked {
+    background-color: #2563eb !important;   /* selected highlight */
+    color: #ffffff !important;
+}
+
+
+  
   </style>
 </head>
 
