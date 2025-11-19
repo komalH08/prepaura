@@ -625,15 +625,15 @@ def get_managerial_response(conversation_history, user_answer, expression_data_j
         gemini_history.append({"role": role, "parts": [msg["content"]]})
 
     if custom_prompt:
-            prompt = f"You are Prepmate, an AI interview architect. {custom_prompt}"
+            prompt = f"You are PrepAura, an AI interview architect. {custom_prompt}"
     elif question_count == 0:
-        prompt = "You are Prepmate, an AI interview architect. Ask your first managerial question (e.g., 'Tell me about a time you had to lead a project.')."
+        prompt = "You are PrepAura, an AI interview architect. Ask your first managerial question (e.g., 'Tell me about a time you had to lead a project.')."
     elif question_count == 1:
-        prompt = "You are Prepmate, an AI interview architect. Ask one, smart, relevant follow-up question based *only* on the user's last answer."
+        prompt = "You are PrepAura, an AI interview architect. Ask one, smart, relevant follow-up question based *only* on the user's last answer."
     elif question_count == 2:
-        prompt = "You are Prepmate, an AI interview architect. Ask your *second* main managerial question (e.g., 'Describe a situation where you had a conflict with a coworker.')."
+        prompt = "You are PrepAura, an AI interview architect. Ask your *second* main managerial question (e.g., 'Describe a situation where you had a conflict with a coworker.')."
     elif question_count == 3:
-        prompt = "You are Prepmate, an AI interview architect. Ask one, smart, relevant follow-up question based *only* on the user's last answer."
+        prompt = "You are PrepAura, an AI interview architect. Ask one, smart, relevant follow-up question based *only* on the user's last answer."
     else:
         session_complete = True
         ai_response = "This concludes the managerial round. Generating your final debrief..."
@@ -705,15 +705,15 @@ def get_hr_response(conversation_history, user_answer, expression_data_json, aud
         gemini_history.append({"role": role, "parts": [msg["content"]]})
 
     if custom_prompt:
-            prompt = f"You are Prepmate, an AI interview architect. {custom_prompt}"
+            prompt = f"You are PrepAura, an AI interview architect. {custom_prompt}"
     elif question_count == 0:
-        prompt = "You are Prepmate, an AI interview architect. Ask your first HR personal interview question (e.g., 'Tell me about yourself' or 'What is your greatest strength?')."
+        prompt = "You are PrepAura, an AI interview architect. Ask your first HR personal interview question (e.g., 'Tell me about yourself' or 'What is your greatest strength?')."
     elif question_count == 1:
-        prompt = "You are Prepmate, an AI interview architect. Ask one, smart, relevant follow-up question based *only* on the user's last answer."
+        prompt = "You are PrepAura, an AI interview architect. Ask one, smart, relevant follow-up question based *only* on the user's last answer."
     elif question_count == 2:
-        prompt = "You are Prepmate, an AI interview architect. Ask your *second* main HR question (e.g., 'Why do you want to work for this company?' or 'Where do you see yourself in 5 years?')."
+        prompt = "You are PrepAura, an AI interview architect. Ask your *second* main HR question (e.g., 'Why do you want to work for this company?' or 'Where do you see yourself in 5 years?')."
     elif question_count == 3:
-        prompt = "You are Prepmate, an AI interview architect. Ask one, smart, relevant follow-up question based *only* on the user's. last answer."
+        prompt = "You are PrepAura, an AI interview architect. Ask one, smart, relevant follow-up question based *only* on the user's. last answer."
     else:
         session_complete = True
         ai_response = "This concludes the HR interview. Generating your final debrief..."
@@ -789,19 +789,19 @@ def get_resume_response(resume_text, conversation_history, user_answer, expressi
         gemini_history.append({"role": role, "parts": [msg["content"]]})
 
     if custom_prompt:
-        prompt = f"You are Prepmate, an AI interview architect. The user's resume is below. {custom_prompt}\n\n{resume_context}"
+        prompt = f"You are PrepAura, an AI interview architect. The user's resume is below. {custom_prompt}\n\n{resume_context}"
     elif question_count == 0:
-        prompt = f"You are Prepmate, an AI hiring manager. Ask your first question based *only* on a specific project, skill, or experience from their resume.\n\n{resume_context}"
+        prompt = f"You are PrepAura, an AI hiring manager. Ask your first question based *only* on a specific project, skill, or experience from their resume.\n\n{resume_context}"
     elif question_count == 1:
-        prompt = f"You are Prepmate. Ask one, smart, relevant follow-up question based *only* on the user's last answer and their resume.\n\n{resume_context}"
+        prompt = f"You are PrepAura. Ask one, smart, relevant follow-up question based *only* on the user's last answer and their resume.\n\n{resume_context}"
     elif question_count == 2:
-        prompt = f"You are Prepmate. Ask your *second* main question, based on a *different* part of their resume.\n\n{resume_context}"
+        prompt = f"You are PrepAura. Ask your *second* main question, based on a *different* part of their resume.\n\n{resume_context}"
     elif question_count == 3:
-        prompt = "You are Prepmate. Ask a smart follow-up question based *only* on the user's last answer.\n\n{resume_context}"
+        prompt = f"You are PrepAura. Ask a smart follow-up question based *only* on the user's last answer.\n\n{resume_context}"
     elif question_count == 4:
-        prompt = f"You are Prepmate. Ask your *third* main question, based on yet another part of their resume (e.g., education or skills section).\n\n{resume_context}"
+        prompt = f"You are PrepAura. Ask your *third* main question, based on yet another part of their resume (e.g., education or skills section).\n\n{resume_context}"
     elif question_count == 5:
-        prompt = f"You are Prepmate. Ask one final, smart follow-up question based *only* on the user's last answer.\n\n{resume_context}"
+        prompt = f"You are PrepAura. Ask one final, smart follow-up question based *only* on the user's last answer.\n\n{resume_context}"
     else:
         session_complete = True
         ai_response = "This concludes the Resume-Based interview. Generating your final debrief..."
@@ -858,7 +858,7 @@ def get_final_report(all_round_results):
     
     results_json = json.dumps(all_round_results, indent=2)
     prompt = f"""
-    You are 'Prepmate', an AI career coach.
+    You are 'PrepAura', an AI career coach.
     A user has just completed a full mock test. Their results from all rounds are provided below in JSON format.
 
     Your task is to generate a comprehensive, professional, and encouraging final report in **Markdown format**.
