@@ -180,6 +180,11 @@ def check_session():
     # ⭐️ --- BUG FIX: REMOVED BAD .headers.add LINES --- ⭐️
     return response, 200
         
+# 🟢 LIGHTWEIGHT PING ROUTE TO KEEP SERVER ALIVE
+@app.route('/api/ping', methods=['GET'])
+def ping():
+    return jsonify({"alive": True}), 200
+
 @app.route('/api/save_report', methods=['POST'])
 @login_required 
 def save_report():
