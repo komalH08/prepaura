@@ -419,7 +419,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("ai-summary").innerHTML =
                 "<div class='ai-bullet'>⚠️ Server not responding. Make sure backend is running.</div>";
         }
-
+    }
 
 
     function restartPractice() {
