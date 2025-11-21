@@ -94,28 +94,21 @@
     }
     /* --------------------------------------------------- */
 
-    /* FIXED BOTTOM BACK BUTTON */
-    .back-btn {
-      position: fixed;
-      bottom: 25px;
-      left: 50%;
-      transform: translateX(-50%);
+    .back-btn-initial {
+      margin-top: 15px;
       background: rgba(255,255,255,0.14);
       color: #fff;
       border: 1px solid rgba(255,255,255,0.25);
-      padding: 12px 20px;
-      border-radius: 12px;
-      font-size: 1rem;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 0.95rem;
       cursor: pointer;
       backdrop-filter: blur(8px);
       transition: 0.25s ease;
-      z-index: 2000;
     }
-    .back-btn:hover {
+
+    .back-btn-initial:hover {
       background: rgba(255,255,255,0.22);
-    }
-    .hidden-btn {
-      display: none !important;
     }
 
     .container {
@@ -409,11 +402,6 @@
     <ul class="nav-links" id="nav-links-list"></ul>
   </nav>
 
-  <!-- SINGLE BACK BUTTON (will hide/show via JS) -->
-  <button id="back-btn" class="back-btn" onclick="location.href='practice.html'">
-    ⬅ Back to Practice Hub
-  </button>
-
   <main class="content">
     <div class="container">
 
@@ -421,6 +409,8 @@
       <div id="setup-screen" class="fade-in show">
         <h1>Aptitude Practice</h1>
         <p>Select a topic to begin your practice session.</p>
+        <button id="back-to-hub" class="back-btn-initial">⬅ Back to Practice Hub</button>
+
 
         <select id="aptitude-topic" class="tool-select">
           <option value="Quantitative Aptitude">Quantitative Aptitude</option>
@@ -482,32 +472,6 @@
   <script src="aptitude.js"></script>
   <script src="auth.js"></script>
 
-  <!-- Back Button Logic -->
-  <script>
-    const backBtn = document.getElementById("back-btn");
-    const setupScreen = document.getElementById("setup-screen");
-    const practiceScreen = document.getElementById("practice-screen");
-    const feedbackScreen = document.getElementById("feedback-screen");
-
-    // Show only on setup initially
-    backBtn.classList.remove("hidden-btn");
-
-    // Hide during practice
-    document.getElementById("start-btn").addEventListener("click", () => {
-      backBtn.classList.add("hidden-btn");
-    });
-
-    // Show again after ending practice
-    document.getElementById("end-btn").addEventListener("click", () => {
-      setTimeout(() => backBtn.classList.remove("hidden-btn"), 300);
-    });
-
-    // Hide when restarting
-    document.getElementById("restart-btn").addEventListener("click", () => {
-      backBtn.classList.add("hidden-btn");
-    });
-  </script>
-
   <!-- Particles -->
   <script>
     particlesJS("particles-js", {
@@ -545,6 +509,25 @@
 
     fadeEls.forEach(el => io.observe(el));
   </script>
+
+  <script>
+  const initialBackBtn = document.getElementById("back-to-hub");
+
+  // Click → go back to main Practice Hub
+  initialBackBtn.onclick = () => {
+    location.href = "practice.html";
+  };
+
+  // Hide this button when user starts practice
+  document.getElementById("start-btn").addEventListener("click", () => {
+    initialBackBtn.style.display = "none";
+  });
+
+  // Show again if they restart practice
+  document.getElementById("restart-btn")?.addEventListener("click", () => {
+    initialBackBtn.style.display = "block";
+  });
+</script>
 
 </body>
 </html>

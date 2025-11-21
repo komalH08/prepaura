@@ -344,11 +344,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             </div>
 
-            </div>
+            </div> <!-- closes apt-report -->
 
-            <button class="apt-report-button" onclick="location.href='practice.html'">
-                ⬅ Back to Practice Hub
-            </button>
+            <div style="margin-top: 25px; text-align: center;">
+                <button class="apt-report-button" onclick="location.href='practice.html'">
+                    ⬅ Back to Practice Hub
+                </button>
             </div>
         `;
 
