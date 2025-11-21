@@ -402,37 +402,46 @@ def get_technical_question(topic, language):
         topic_instruction = "from a mix of DSA topics (Arrays, Strings, Linked Lists, Trees, Graphs, Sorting, or Searching)."
     
     prompt = f"""
-    Generate one medium-difficulty technical coding problem {topic_instruction} for {lang_name}.
-    Your response **MUST** be a JSON object inside a markdown code block.
-    
-    Your JSON object must contain these exact keys:
-    - "question_title": A short title.
-    - "problem_statement": A 2-3 sentence description of the task. Use \\n for newlines.
-    - "starter_code": An EMPTY boilerplate template for the user to fill in.
-    - "test_cases": A list of 3 simple test cases. **Each test case MUST be an object with two keys: "stdin" (the input string) and "expected_output" (the expected output string).**
-    - "model_solution": The complete, correct, and optimal code solution.
-    
-    Example of a valid, multi-line JSON response:
-    ```json
+    You must return ONLY valid JSON. No markdown. No backticks. No explanations.
+
+    Return a JSON object with EXACTLY these keys:
+    "question_title", "problem_statement", "starter_code", "test_cases", "model_solution"
+
+    Rules:
+    - Do NOT include a code block like ```json
+    - Do NOT include any text before or after the JSON
+    - "test_cases" MUST be a list of objects with:
+        {{"stdin": "value", "expected_output": "value"}}
+    - Escape all newlines as \\n
+    - starter_code must NOT contain tabs, only spaces
+
+    Example:
     {python_example}
-    ```
+
+    Now generate a NEW coding question {topic_instruction} for {lang_name}.
+    Remember: Respond ONLY with a raw JSON object. Nothing else.
     """
+
     response = model.generate_content(prompt)
+
+    # --- Safety: No text returned
     if not response.text:
         print("Error: Gemini returned an empty response for get_technical_question.")
         return {"error": "The AI failed to generate a question. This may be due to safety filters. Please try again."}
+
+    # --- Stable JSON extraction ---
+    clean = response.text.strip()
+
+    # Remove any accidental markdown fences
+    clean = clean.replace("```json", "").replace("```", "").strip()
+
     try:
-        json_match = re.search(r'\{.*\}', response.text, re.DOTALL)
-        if not json_match:
-            print(f"Error: No JSON object found in Gemini response. Response was: {response.text}")
-            raise json.JSONDecodeError("No JSON object found in response", response.text, 0)
-        json_text = json_match.group(0)
-        data = json.loads(json_text)
+        data = json.loads(clean)
         return data
-    except json.JSONDecodeError as e:
-        print(f"Error: Failed to decode JSON from Gemini. Response was: {response.text}")
-        print(f"JSONDecodeError: {e}")
-        return {"error": "The AI returned an invalid response. Please try again."}
+    except json.JSONDecodeError:
+        print("❌ RAW AI OUTPUT (Technical Question):", response.text)
+        return {"error": "Invalid JSON from AI. Please try again."}
+
 
 def run_code_with_judge0(user_code, language, test_cases):
     print(f"Sending {language} code to Judge0 for batch processing...")
