@@ -310,6 +310,9 @@ document.addEventListener("DOMContentLoaded", () => {
             <button class="apt-report-button" onclick="location.href='practice.html'">
                 ⬅ Back to Practice Hub
             </button>
+            </div>
+        `;
+
 
         // --- Animate circular score (pie chart style) ---
         const circle = feedbackReport.querySelector(".apt-score-progress");

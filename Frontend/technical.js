@@ -151,7 +151,7 @@ function initializeApp() {
         }
         
         try {
-            const response = await fetch("https://prepmate-backend-x77z.onrender.com/technical-question", {
+            const response = await fetch("https://prepmate-backend-x77z.onrender.com/api/technical-question", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ 
