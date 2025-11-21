@@ -387,7 +387,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }, stepTime);
         }
 
-        // --- Fetch AI text feedback and put into "AI Coach Notes" ---
+        // --- Fetch AI text feedback and put into Pro Mode sections ---
         try {
             const response = await fetch("https://prepmate-backend-x77z.onrender.com/aptitude-feedback", {
                 method: "POST",
@@ -395,9 +395,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({ results: practiceResults }),
             });
             const data = await response.json();
-            const aiContentEl = document.getElementById("apt-ai-content");
-            
-            if (!aiContentEl) return;
 
             if (data.error) {
                 document.getElementById("ai-summary").innerHTML = 
@@ -419,12 +416,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
         } catch (error) {
-            const aiContentEl = document.getElementById("apt-ai-content");
-            if (aiContentEl) {
-                aiContentEl.innerText = "⚠️ Server not responding. Make sure backend is running.";
-            }
+            document.getElementById("ai-summary").innerHTML =
+                "<div class='ai-bullet'>⚠️ Server not responding. Make sure backend is running.</div>";
         }
-    }
+
 
 
     function restartPractice() {
