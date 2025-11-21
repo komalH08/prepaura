@@ -301,13 +301,15 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
 
             <div class="apt-ai-notes">
-              <div class="apt-ai-heading">AI Coach Notes</div>
-              <div class="apt-ai-content" id="apt-ai-content">
-                Generating personalised feedback based on your answers...
-              </div>
+                <div class="apt-ai-heading">✨ AI Coach Insights</div>
+                <div class="apt-ai-content" id="apt-ai-content">
+                    Generating personalised feedback...
+                </div>
             </div>
-          </div>
-        `;
+
+            <button class="apt-report-button" onclick="location.href='practice.html'">
+                ⬅ Back to Practice Hub
+            </button>
 
         // --- Animate circular score (pie chart style) ---
         const circle = feedbackReport.querySelector(".apt-score-progress");
