@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+    const initialBackBtn = document.getElementById("back-to-hub");
+
         // --- Markdown to Beautiful HTML (Pro Mode) ---
     function convertMarkdownToProHTML(md) {
         if (!md) return "";
@@ -74,6 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
         practiceResults = [];
         questionCount = 0;
         
+        initialBackBtn?.style.display = "none";
+
         setupScreen.classList.add("hidden");
         feedbackScreen.classList.add("hidden");
         practiceScreen.classList.remove("hidden");
@@ -437,10 +441,12 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("ai-summary").innerHTML =
                 "<div class='ai-bullet'>⚠️ Server not responding.</div>";
         }
-        }
+    }
 
     function restartPractice() {
         feedbackScreen.classList.add("hidden");
         setupScreen.classList.remove("hidden");
+
+        initialBackBtn?.style.display = "block";
     }
 });
