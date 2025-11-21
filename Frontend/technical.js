@@ -172,14 +172,30 @@ function initializeApp() {
             }
             return data; 
             
+        // New catch block for fetchQuestion()
+
         } catch (error) {
             isFetching = false;
             if (!nextQuestionPromise) {
                 loadingSpinner.style.display = "none";
             }
-            if (questionCount > 0) {
-                 alert("⚠️ Server not responding. Make sure backend is running.");
+            
+            // ✅ FIX: Improved Error Handling & Restart Logic
+            if (questionCount === 0) {
+                // If this is the FIRST question (questionCount is 0 here, 
+                // but becomes 1 later in startPractice if successful)
+                alert("⚠️ Failed to connect to backend server. Please check the service status and try again.");
+                // We don't call restartPractice here, we rely on the logic in startPractice()
+                // after it receives 'null' from fetchQuestion().
+            } else {
+                 // For subsequent questions
+                 alert("⚠️ Server not responding while fetching next question. Make sure backend is running.");
+                 // We don't call restartPractice here, we rely on the logic in nextQuestion()
+                 // after it receives 'null' from the promise.
             }
+            
+            // The main logic in startPractice() already handles the restart if this returns null:
+            // if (currentQuestionData) { ... } else { restartPractice(); }
             return null;
         }
     }
