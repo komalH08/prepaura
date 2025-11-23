@@ -260,7 +260,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Build premium cyberpunk report UI
         feedbackReport.innerHTML = `
-            <h3 class="neon-flicker">PrepAura AI - Report</h3>
+          <div class="apt-report">
+            <h3>PrepAura AI - Report</h3>
             <div class="subtitle">Your personalised, AI-powered analysis.</div>
 
             <div class="report-top-row">
@@ -314,7 +315,12 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
             </div>
 
+            <div class="apt-report-footer">
+              <div>
+                <button id="download-report-btn" class="btn-ghost">Download Report (PNG)</button>
+              </div>
             </div>
+          </div>
         `;
 
         // Animate the circular ring stroke
@@ -333,6 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })();
 
         // Hook up "Practice Again" to restart
+        // NOTE: These listeners target buttons *outside* the report box now
         document.getElementById("practice-again-btn").addEventListener("click", () => {
             restartPractice();
             // scroll to top of setup
@@ -365,18 +372,20 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // ⭐️ NEW: Show a dedicated loading spinner inside the summary card while fetching
+        // ⭐️ CORRECTED LOADING AND RENDERING LOGIC ⭐️
+        
+        // 1. Set the loading spinner only inside the Overall Summary content area, 
+        //    as that's the main AI analysis loading indicator.
         document.getElementById("ai-summary").innerHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100px; padding: 10px;">
-                <div class="spinner" style="width: 30px; height: 30px; border-width: 4px; border-top-color: #a78bfa;"></div>
-                <div style="color: #9fb9ff; font-size: 0.9rem; margin-top: 10px;">Analyzing performance...</div>
+            <div class="ai-content">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100px; padding: 10px;">
+                    <div class="spinner" style="width: 30px; height: 30px; border-width: 4px; border-top-color: #a78bfa;"></div>
+                    <div style="color: #9fb9ff; font-size: 0.9rem; margin-top: 10px;">Analyzing performance...</div>
+                </div>
             </div>
         `;
-        document.getElementById("ai-strong").innerHTML = "";
-        document.getElementById("ai-weak").innerHTML = "";
-        document.getElementById("ai-key").innerHTML = "";
-
-        // Fetch AI feedback and render into cards (use your existing endpoint)
+        // Ensure other cards start with their default placeholder text (which is in the HTML template now)
+        
         try {
             const resp = await fetch("https://prepmate-backend-x77z.onrender.com/aptitude-feedback", {
                 method: "POST",
@@ -385,23 +394,17 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             const json = await resp.json();
             
-            // If the fetch succeeds, reset the other cards to their initial placeholder text
-            if (!json.error) {
-                 document.getElementById("ai-strong").innerHTML = `<div class="ai-content">Analysing strongest topic...</div>`;
-                 document.getElementById("ai-weak").innerHTML = `<div class="ai-content">Analysing weak areas...</div>`;
-                 document.getElementById("ai-key").innerHTML = `<div class="ai-content">Preparing key takeaway...</div>`;
-            }
-            
             if (json.error) {
-                document.getElementById("ai-summary").innerText = `⚠️ ${json.error}`;
-                document.getElementById("ai-strong").innerText = "–";
-                document.getElementById("ai-weak").innerText = "–";
-                document.getElementById("ai-key").innerText = "–";
+                // Handle error state by displaying the error message
+                document.getElementById("ai-summary").innerHTML = `<div class="ai-content">⚠️ ${json.error}</div>`;
+                document.getElementById("ai-strong").innerHTML = `<div class="ai-content">–</div>`;
+                document.getElementById("ai-weak").innerHTML = `<div class="ai-content">–</div>`;
+                document.getElementById("ai-key").innerHTML = `<div class="ai-content">–</div>`;
                 return;
             }
             const fb = json.feedback || "";
 
-            // Extract sections using robust regex & convert to pro HTML if converter exists
+            // Extract sections using robust regex
             const summaryMatch = fb.match(/### Overall Summary([\s\S]*?)### Strongest/);
             const strongMatch = fb.match(/### Strongest([\s\S]*?)### Weakest/);
             const weakMatch = fb.match(/### Weakest([\s\S]*?)### Key Takeaway/);
@@ -412,17 +415,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 return (txt || "").replace(/\n/g,"<br>");
             };
             
-            // Render final content
+            // Render final content inside the ai-card divs
             document.getElementById("ai-summary").innerHTML = `<div class="ai-content">${conv(summaryMatch ? summaryMatch[1].trim() : fb.slice(0,350) + (fb.length>350?"...":""))}</div>`;
             document.getElementById("ai-strong").innerHTML = `<div class="ai-content">${conv(strongMatch ? strongMatch[1].trim() : "–")}</div>`;
             document.getElementById("ai-weak").innerHTML = `<div class="ai-content">${conv(weakMatch ? weakMatch[1].trim() : "–")}</div>`;
             document.getElementById("ai-key").innerHTML = `<div class="ai-content">${conv(keyMatch ? keyMatch[1].trim() : "–")}</div>`;
 
         } catch (err) {
-            document.getElementById("ai-summary").innerText = "⚠️ Server not responding.";
-            document.getElementById("ai-strong").innerText = "–";
-            document.getElementById("ai-weak").innerText = "–";
-            document.getElementById("ai-key").innerText = "–";
+            // Handle general fetch error
+            document.getElementById("ai-summary").innerHTML = `<div class="ai-content">⚠️ Server not responding.</div>`;
+            document.getElementById("ai-strong").innerHTML = `<div class="ai-content">–</div>`;
+            document.getElementById("ai-weak").innerHTML = `<div class="ai-content">–</div>`;
+            document.getElementById("ai-key").innerHTML = `<div class="ai-content">–</div>`;
         }
     }
 
