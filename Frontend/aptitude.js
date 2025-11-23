@@ -221,29 +221,146 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function endPractice() {
-        clearInterval(timerInterval); 
-        
+        clearInterval(timerInterval);
+
         practiceScreen.classList.add("hidden");
         feedbackScreen.classList.remove("hidden");
-        feedbackReport.innerText = "Generating your feedback report... 🤔";
 
-        if (practiceResults.length === 0) {
+        // Basic Stats
+        const total = practiceResults.length;
+
+        if (total === 0) {
             feedbackReport.innerText = "You did not complete any questions. Practice again to get a report.";
             return;
         }
 
+        const correct = practiceResults.filter(r => r.is_correct).length;
+        const accuracy = Math.round((correct / total) * 100);
+
+        // ------- UI STRUCTURE --------
+        feedbackReport.innerHTML = `
+        <div class="apt-report">
+                
+            <div class="apt-report-header">
+                <div>
+                    <h3>Aptitude Practice Summary</h3>
+                    <p>Great effort! Here's how you performed 👇</p>
+                </div>
+
+                <div class="apt-score-wrapper">
+                    <svg class="apt-score-ring" viewBox="0 0 140 140">
+                    <circle class="apt-score-bg" cx="70" cy="70" r="60"></circle>
+                    <circle class="apt-score-progress" cx="70" cy="70" r="60"></circle>
+                    </svg>
+                    <div class="apt-score-text">
+                    <span class="apt-score-number">${accuracy}</span>
+                    <span class="apt-score-percent">%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="apt-metrics-grid">
+                <div class="apt-metric">
+                    <div class="m-label">Questions</div>
+                    <div class="m-value">${total}</div>
+                </div>
+                <div class="apt-metric">
+                    <div class="m-label">Correct</div>
+                    <div class="m-value">${correct}</div>
+                </div>
+                <div class="apt-metric">
+                    <div class="m-label">Accuracy</div>
+                    <div class="m-value">${accuracy}%</div>
+                </div>
+            </div>
+
+            <div class="ai-section">
+                <h3>📘 Overall Summary</h3>
+                <div id="ai-summary" class="ai-content">Loading...</div>
+            </div>
+
+            <div class="ai-section">
+                <h3>🟦 Strongest Topic</h3>
+                <div id="ai-strong" class="ai-content">Loading...</div>
+            </div>
+
+            <div class="ai-section">
+                <h3>🟥 Weakest Topic</h3>
+                <div id="ai-weak" class="ai-content">Loading...</div>
+            </div>
+
+            <div class="ai-section">
+                <h3>💡 Key Takeaway</h3>
+                <div id="ai-key" class="ai-content">Loading...</div>
+            </div>
+
+        </div>
+        `;
+
+        // ------- Animate Score Pie Chart -------
+        // ------- Animate Score Pie Chart -------
+            const circle = document.querySelector(".apt-score-progress");
+            if (circle) {
+                const radius = 60;
+                const circumference = 2 * Math.PI * radius;
+                circle.style.strokeDasharray = `${circumference}`;
+                circle.style.strokeDashoffset = `${circumference}`;
+
+                setTimeout(() => {
+                    circle.style.strokeDashoffset = `${circumference * (1 - accuracy / 100)}`;
+                }, 200);
+            } else {
+                // fallback safe: do nothing if the element isn't present
+                console.warn("apt-score-progress element not found — skipping animation.");
+            }
+
+
+        // -------- Fetch AI Feedback --------
         try {
             const response = await fetch("https://prepmate-backend-x77z.onrender.com/aptitude-feedback", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ results: practiceResults }),
             });
+
             const data = await response.json();
-            feedbackReport.innerText = data.error ? `Error: ${data.error}` : data.feedback;
+
+            if (data.error) {
+                document.getElementById("ai-summary").innerText = data.error;
+                return;
+            }
+
+            const fb = data.feedback || "";
+
+            // safe defaults
+            if (!fb) {
+                document.getElementById("ai-summary").innerText = "No AI feedback received.";
+                document.getElementById("ai-strong").innerText = "–";
+                document.getElementById("ai-weak").innerText = "–";
+                document.getElementById("ai-key").innerText = "–";
+            } else {
+                // Extract sections safely
+                const summary = (fb.split("### Strongest")[0] || "").replace("### Overall Summary", "").trim() || "No summary available.";
+                const strongest = (fb.split("### Weakest")[0].split("### Strongest")[1] || "").trim() || "–";
+                const weakest = (fb.split("### Key Takeaway")[0].split("### Weakest")[1] || "").trim() || "–";
+                const keyTakeaway = (fb.split("### Key Takeaway")[1] || "").trim() || "–";
+
+                // Apply to UI
+                document.getElementById("ai-summary").innerText = summary;
+                document.getElementById("ai-strong").innerText = strongest;
+                document.getElementById("ai-weak").innerText = weakest;
+                document.getElementById("ai-key").innerText = keyTakeaway;
+            }
+
+
         } catch (error) {
-            feedbackReport.innerText = "⚠️ Server not responding. Make sure backend is running.";
+            document.getElementById("ai-summary").innerText = "⚠️ Server not responding.";
+            document.getElementById("ai-strong").innerText = "–";
+            document.getElementById("ai-weak").innerText = "–";
+            document.getElementById("ai-key").innerText = "–";
         }
     }
+
 
     function restartPractice() {
         feedbackScreen.classList.add("hidden");
