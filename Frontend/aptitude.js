@@ -260,85 +260,141 @@ document.addEventListener("DOMContentLoaded", () => {
         const correct = practiceResults.filter(r => r.is_correct).length;
         const accuracy = Math.round((correct / total) * 100);
 
-        // ------- UI STRUCTURE --------
+        // --- PREMIUM REPORT UI ---
         feedbackReport.innerHTML = `
-        <div class="apt-report">
-                
-            <div class="apt-report-header">
-                <div>
-                    <h3>Aptitude Practice Summary</h3>
-                    <p>Great effort! Here's how you performed 👇</p>
-                </div>
+        <div class="apt-report premium-report">
+        <div class="premium-header">
+            <div class="premium-left">
+            <h3 class="premium-title">Aptitude Practice — Summary</h3>
+            <p class="premium-sub">Great effort! Here's a compact, professional snapshot of your run.</p>
+            </div>
+            <div class="premium-image-wrap">
+            <img class="premium-spark" src="/mnt/data/Aptitude_Practice_Summary_dashboard_displayed_in_t.png" alt="report-spark" />
+            </div>
+        </div>
 
-                <div class="apt-score-wrapper">
-                    <svg class="apt-score-ring" viewBox="0 0 140 140">
-                    <circle class="apt-score-bg" cx="70" cy="70" r="60"></circle>
-                    <circle class="apt-score-progress" cx="70" cy="70" r="60"></circle>
-                    </svg>
-                    <div class="apt-score-text">
-                    <span class="apt-score-number">${accuracy}</span>
-                    <span class="apt-score-percent">%</span>
-                    </div>
+        <div class="premium-body">
+            <div class="score-card">
+            <div class="score-visual">
+                <svg class="apt-score-ring" viewBox="0 0 140 140">
+                <circle class="apt-score-bg" cx="70" cy="70" r="60"></circle>
+                <circle class="apt-score-progress" cx="70" cy="70" r="60"></circle>
+                </svg>
+                <div class="apt-score-text">
+                <div class="apt-score-number" data-target="${accuracy}">0</div>
+                <div class="apt-score-percent">%</div>
                 </div>
             </div>
 
-            <div class="apt-metrics-grid">
-                <div class="apt-metric">
-                    <div class="m-label">Questions</div>
-                    <div class="m-value">${total}</div>
+            <div class="score-metrics">
+                <div class="metric">
+                <div class="m-label">Questions</div>
+                <div class="m-value">${total}</div>
                 </div>
-                <div class="apt-metric">
-                    <div class="m-label">Correct</div>
-                    <div class="m-value">${correct}</div>
+                <div class="metric">
+                <div class="m-label">Correct</div>
+                <div class="m-value">${correct}</div>
                 </div>
-                <div class="apt-metric">
-                    <div class="m-label">Accuracy</div>
-                    <div class="m-value">${accuracy}%</div>
+                <div class="metric">
+                <div class="m-label">Accuracy</div>
+                <div class="m-value">${accuracy}%</div>
                 </div>
             </div>
+            </div>
 
-            <div class="ai-section">
+            <div class="ai-columns">
+            <div class="ai-column">
+                <div class="ai-section pro">
                 <h3>📘 Overall Summary</h3>
                 <div id="ai-summary" class="ai-content">Loading...</div>
-            </div>
+                </div>
 
-            <div class="ai-section">
+                <div class="ai-section pro">
                 <h3>🟦 Strongest Topic</h3>
                 <div id="ai-strong" class="ai-content">Loading...</div>
+                </div>
             </div>
 
-            <div class="ai-section">
+            <div class="ai-column">
+                <div class="ai-section pro">
                 <h3>🟥 Weakest Topic</h3>
                 <div id="ai-weak" class="ai-content">Loading...</div>
-            </div>
+                </div>
 
-            <div class="ai-section">
+                <div class="ai-section pro">
                 <h3>💡 Key Takeaway</h3>
                 <div id="ai-key" class="ai-content">Loading...</div>
+                </div>
+            </div>
             </div>
 
+            <div class="report-actions">
+            <button id="download-report-btn" class="tool-button-secondary">Download Report (PNG)</button>
+            <button id="back-to-hub-btn" class="tool-button-primary">⬅ Back to Practice Hub</button>
+            </div>
+        </div>
         </div>
         `;
 
-        // ------- Animate Score Pie Chart -------
-        // ------- Animate Score Pie Chart -------
-            const circle = document.querySelector(".apt-score-progress");
-            if (circle) {
-                const radius = 60;
-                const circumference = 2 * Math.PI * radius;
-                circle.style.strokeDasharray = `${circumference}`;
-                circle.style.strokeDashoffset = `${circumference}`;
+        // --- Animate circular score ring ---
+        const circle = feedbackReport.querySelector(".apt-score-progress");
+        if (circle) {
+            const radius = 60;
+            const circumference = 2 * Math.PI * radius;
+            circle.style.strokeDasharray = `${circumference} ${circumference}`;
+            circle.style.strokeDashoffset = `${circumference}`;
 
-                setTimeout(() => {
-                    circle.style.strokeDashoffset = `${circumference * (1 - accuracy / 100)}`;
-                }, 200);
+            // animate after small delay so DOM paint occurs
+            setTimeout(() => {
+                circle.style.transition = 'stroke-dashoffset 900ms cubic-bezier(.22,.98,.36,1)';
+                circle.style.strokeDashoffset = `${circumference * (1 - accuracy / 100)}`;
+            }, 120);
+        }
+
+        // --- Animate the score number (0 -> accuracy) ---
+        const numberEl = feedbackReport.querySelector(".apt-score-number");
+        if (numberEl) {
+            const target = Number(numberEl.dataset.target) || accuracy;
+            let cur = 0;
+            const duration = 900;
+            const stepTime = 30;
+            const step = Math.max(1, Math.round(target / (duration / stepTime)));
+
+            const numInterval = setInterval(() => {
+                cur += step;
+                if (cur >= target) {
+                    cur = target;
+                    clearInterval(numInterval);
+                }
+                numberEl.innerText = cur;
+            }, stepTime);
+        }
+
+        // --- Hook up action buttons (download + back) ---
+        const downloadBtn = document.getElementById("download-report-btn");
+        const backBtn = document.getElementById("back-to-hub-btn");
+
+        backBtn?.addEventListener("click", () => {
+            location.href = "practice.html";
+        });
+
+        // optional: simple screenshot-based download (uses HTMLCanvas via html2canvas if available).
+        downloadBtn?.addEventListener("click", async () => {
+            // If html2canvas available, use it. Otherwise, fallback to alert.
+            if (window.html2canvas) {
+                const el = feedbackReport.querySelector(".premium-report");
+                const canvas = await window.html2canvas(el, { scale: 2 });
+                const dataUrl = canvas.toDataURL("image/png");
+                const a = document.createElement("a");
+                a.href = dataUrl;
+                a.download = `PrepAura_report_${Date.now()}.png`;
+                a.click();
             } else {
-                // fallback safe: do nothing if the element isn't present
-                console.warn("apt-score-progress element not found — skipping animation.");
+                alert("Download requires html2canvas. Add html2canvas script to page to enable downloading.");
             }
+        });
 
-
-        // -------- Fetch AI Feedback --------
+        // -------- Fetch AI Feedback and render (markdown → pro html) --------
         try {
             const response = await fetch("https://prepmate-backend-x77z.onrender.com/aptitude-feedback", {
                 method: "POST",
@@ -347,34 +403,26 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             const data = await response.json();
-
             if (data.error) {
                 document.getElementById("ai-summary").innerText = data.error;
+                document.getElementById("ai-strong").innerText = "–";
+                document.getElementById("ai-weak").innerText = "–";
+                document.getElementById("ai-key").innerText = "–";
                 return;
             }
 
             const fb = data.feedback || "";
 
-            // safe defaults
-            if (!fb) {
-                document.getElementById("ai-summary").innerText = "No AI feedback received.";
-                document.getElementById("ai-strong").innerText = "–";
-                document.getElementById("ai-weak").innerText = "–";
-                document.getElementById("ai-key").innerText = "–";
-            } else {
-                // Extract sections safely
-                const summary = (fb.split("### Strongest")[0] || "").replace("### Overall Summary", "").trim() || "No summary available.";
-                const strongest = (fb.split("### Weakest")[0].split("### Strongest")[1] || "").trim() || "–";
-                const weakest = (fb.split("### Key Takeaway")[0].split("### Weakest")[1] || "").trim() || "–";
-                const keyTakeaway = (fb.split("### Key Takeaway")[1] || "").trim() || "–";
+            const summary = (fb.split("### Strongest")[0] || "").replace("### Overall Summary", "").trim() || "No summary available.";
+            const strongest = (fb.split("### Weakest")[0].split("### Strongest")[1] || "").trim() || "–";
+            const weakest = (fb.split("### Key Takeaway")[0].split("### Weakest")[1] || "").trim() || "–";
+            const keyTakeaway = (fb.split("### Key Takeaway")[1] || "").trim() || "–";
 
-                // Apply to UI
-                document.getElementById("ai-summary").innerHTML = convertMarkdownToProHTML(summary);
-                document.getElementById("ai-strong").innerHTML = convertMarkdownToProHTML(strongest);
-                document.getElementById("ai-weak").innerHTML = convertMarkdownToProHTML(weakest);
-                document.getElementById("ai-key").innerHTML = convertMarkdownToProHTML(keyTakeaway);
-            }
-
+            // Use the PRO Markdown→HTML converter (keeps styles)
+            document.getElementById("ai-summary").innerHTML = convertMarkdownToProHTML(summary);
+            document.getElementById("ai-strong").innerHTML = convertMarkdownToProHTML(strongest);
+            document.getElementById("ai-weak").innerHTML = convertMarkdownToProHTML(weakest);
+            document.getElementById("ai-key").innerHTML = convertMarkdownToProHTML(keyTakeaway);
 
         } catch (error) {
             document.getElementById("ai-summary").innerText = "⚠️ Server not responding.";
@@ -383,6 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("ai-key").innerText = "–";
         }
     }
+
 
 
     function restartPractice() {
