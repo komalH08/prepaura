@@ -345,7 +345,6 @@ pre#solution-box {
 /* top row layout */
 .report-top-row {
   display: flex;
-  gap: 40px;
   align-items: center;
   justify-content: center;
   margin-top: 30px;
@@ -383,19 +382,12 @@ pre#solution-box {
   color: #9fb9ff;
   font-weight:700;
 }
-
-/* small stat cards to the right */
-/* --- place stat cards vertically beside score ring --- */
-.report-stats-wrapper {
+.report-stats-horizontal-wrapper {
   display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.report-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  gap: 15px; /* Spacing between the three cards */
+  justify-content: center; /* Center the cards horizontally */
+  margin-top: 25px; /* Spacing below the main score ring */
+  flex-wrap: wrap; /* Allow wrapping on small screens */
 }
 
 .stat-card {

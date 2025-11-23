@@ -265,7 +265,6 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="subtitle">Your personalised, AI-powered analysis. Compact, actionable, cyberpunk.</div>
 
             <div class="report-top-row">
-              <!-- LEFT: Big score ring -->
               <div class="apt-score-wrapper">
                 <svg class="apt-score-ring" viewBox="0 0 140 140">
                   <circle class="apt-score-bg" cx="70" cy="70" r="60" stroke-width="12" fill="none" stroke="rgba(30,40,50,0.5)"></circle>
@@ -276,33 +275,27 @@ document.addEventListener("DOMContentLoaded", () => {
                   <div class="apt-score-percent">%</div>
                 </div>
               </div>
-
-              <!-- RIGHT: small stats -->
-              <div>
-                <div class="report-stats">
-                  <div class="stat-card">
-                    <div class="label">Avg Time</div>
-                    <div class="value">${(practiceResults.reduce((s,r)=>s+(r.time_taken_seconds||0),0)/total).toFixed(1)}s</div>
-                  </div>
-                  <div class="stat-card">
-                    <div class="label">Accuracy</div>
-                    <div class="value">${accuracy}%</div>
-                  </div>
-                  <div class="stat-card">
-                    <div class="label">Topic</div>
-                    <div class="value">${selectedTopic || "Mix"}</div>
-                  </div>
+            </div> <div class="report-stats-horizontal-wrapper"> 
+                <div class="stat-card">
+                  <div class="label">Avg Time</div>
+                  <div class="value">${(practiceResults.reduce((s,r)=>s+(r.time_taken_seconds||0),0)/total).toFixed(1)}s</div>
                 </div>
-
-                <div class="mini-legend">
-                  <div>● <strong>Overall</strong></div>
-                  <div style="opacity:.8">● <strong>Strongest</strong></div>
-                  <div style="opacity:.7">● <strong>Weakest</strong></div>
+                <div class="stat-card">
+                  <div class="label">Accuracy</div>
+                  <div class="value">${accuracy}%</div>
                 </div>
-              </div>
+                <div class="stat-card">
+                  <div class="label">Topic</div>
+                  <div class="value">${selectedTopic || "Mix"}</div>
+                </div>
             </div>
 
-            <!-- AI cards -->
+            <div class="mini-legend">
+              <div>● <strong>Overall</strong></div>
+              <div style="opacity:.8">● <strong>Strongest</strong></div>
+              <div style="opacity:.7">● <strong>Weakest</strong></div>
+            </div>
+
             <div class="ai-cards-grid" style="margin-top:22px;">
               <div class="ai-card">
                 <h4>📘 Overall Summary</h4>
@@ -322,16 +315,7 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
             </div>
 
-            <div class="apt-report-footer">
-              <div>
-                <button id="download-report-btn" class="btn-ghost">Download Report (PNG)</button>
-              </div>
-              <div style="display:flex;gap:10px">
-                <button id="back-report-btn" class="btn-ghost" onclick="location.href='practice.html'">⬅ Back to Practice Hub</button>
-                <button id="practice-again-btn" class="btn-primary">Practice Again</button>
-              </div>
             </div>
-          </div>
         `;
 
         // Animate the circular ring stroke
@@ -382,6 +366,17 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
+        // ⭐️ NEW: Show a dedicated loading spinner inside the summary card while fetching
+        document.getElementById("ai-summary").innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100px; padding: 10px;">
+                <div class="spinner" style="width: 30px; height: 30px; border-width: 4px; border-top-color: #a78bfa;"></div>
+                <div style="color: #9fb9ff; font-size: 0.9rem; margin-top: 10px;">Analyzing performance...</div>
+            </div>
+        `;
+        document.getElementById("ai-strong").innerHTML = "";
+        document.getElementById("ai-weak").innerHTML = "";
+        document.getElementById("ai-key").innerHTML = "";
+
         // Fetch AI feedback and render into cards (use your existing endpoint)
         try {
             const resp = await fetch("https://prepmate-backend-x77z.onrender.com/aptitude-feedback", {
@@ -390,6 +385,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({ results: practiceResults }),
             });
             const json = await resp.json();
+            
+            // If the fetch succeeds, reset the other cards to their initial placeholder text
+            if (!json.error) {
+                 document.getElementById("ai-strong").innerHTML = `<div class="ai-content">Analysing strongest topic...</div>`;
+                 document.getElementById("ai-weak").innerHTML = `<div class="ai-content">Analysing weak areas...</div>`;
+                 document.getElementById("ai-key").innerHTML = `<div class="ai-content">Preparing key takeaway...</div>`;
+            }
+            
             if (json.error) {
                 document.getElementById("ai-summary").innerText = `⚠️ ${json.error}`;
                 document.getElementById("ai-strong").innerText = "–";
@@ -409,11 +412,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (typeof convertMarkdownToProHTML === "function") return convertMarkdownToProHTML(txt || "");
                 return (txt || "").replace(/\n/g,"<br>");
             };
+            
+            // Render final content
+            document.getElementById("ai-summary").innerHTML = `<div class="ai-content">${conv(summaryMatch ? summaryMatch[1].trim() : fb.slice(0,350) + (fb.length>350?"...":""))}</div>`;
+            document.getElementById("ai-strong").innerHTML = `<div class="ai-content">${conv(strongMatch ? strongMatch[1].trim() : "–")}</div>`;
+            document.getElementById("ai-weak").innerHTML = `<div class="ai-content">${conv(weakMatch ? weakMatch[1].trim() : "–")}</div>`;
+            document.getElementById("ai-key").innerHTML = `<div class="ai-content">${conv(keyMatch ? keyMatch[1].trim() : "–")}</div>`;
 
-            document.getElementById("ai-summary").innerHTML = conv(summaryMatch ? summaryMatch[1].trim() : fb.slice(0,350) + (fb.length>350?"...":""));
-            document.getElementById("ai-strong").innerHTML = conv(strongMatch ? strongMatch[1].trim() : "");
-            document.getElementById("ai-weak").innerHTML = conv(weakMatch ? weakMatch[1].trim() : "");
-            document.getElementById("ai-key").innerHTML = conv(keyMatch ? keyMatch[1].trim() : "");
         } catch (err) {
             document.getElementById("ai-summary").innerText = "⚠️ Server not responding.";
             document.getElementById("ai-strong").innerText = "–";
