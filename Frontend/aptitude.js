@@ -260,9 +260,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Build premium cyberpunk report UI
         feedbackReport.innerHTML = `
-          <div class="apt-report cyber-glitch">
-            <h3 class="neon-flicker">Practice Report — PrepAura AI</h3>
-            <div class="subtitle">Your personalised, AI-powered analysis. Compact, actionable, cyberpunk.</div>
+            <h3 class="neon-flicker">PrepAura AI - Report</h3>
+            <div class="subtitle">Your personalised, AI-powered analysis.</div>
 
             <div class="report-top-row">
               <div class="apt-score-wrapper">
