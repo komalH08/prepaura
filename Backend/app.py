@@ -108,7 +108,7 @@ import google.generativeai as genai
 
 # Configure Gemini with your Render Key (already added in environment)
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-
+client = genai.Client()
 # app.py: Replace the old chat_gemini function with this
 @app.route('/api/gemini', methods=['POST'])
 def chat_gemini_stream():
@@ -120,7 +120,6 @@ def chat_gemini_stream():
             # We must return a normal JSON error here, not SSE
             return jsonify({"error": "Missing prompt"}), 400
 
-        model = genai.GenerativeModel("models/gemini-flash-latest")
 
         # System Instruction for Conciseness and HTML (Crucial for formatting and length)
         system_instruction = (
@@ -133,8 +132,11 @@ def chat_gemini_stream():
 
         def stream_gemini_response():
             try:
-                # ⭐️ Use the streaming API ⭐️
-                response_stream = model.generate_content_stream([system_instruction, prompt])
+                #use clients models streaming method
+                response_stream = client.models.generate_content_stream(
+                    model="models/gemini-1.5-flash-latest",
+                    contents=[system_instruction, prompt] 
+                )
                 
                 for chunk in response_stream:
                     # Escape newlines for transport, but primarily use the white-space: pre-wrap on the front end
