@@ -118,7 +118,7 @@ def chat_gemini():
         if not prompt:
             return jsonify({"error": "Missing prompt"}), 400
 
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("models/gemini-flash-latest")
 
         # Gemini now needs array format
         response = model.generate_content([prompt])
