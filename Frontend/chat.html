@@ -150,7 +150,7 @@
 
         try {
           // NOTE: Replace /api/gemini with your backend endpoint that proxies to Gemini securely.
-          const res = await fetch("/api/gemini", {
+          const res = await fetch("https://prepmate-backend-x77z.onrender.com/api/gemini", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ prompt: q })
