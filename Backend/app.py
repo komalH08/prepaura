@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, Response, stream_with_context
 from flask_cors import CORS
 from ai_logic import (
     get_ai_response, 
@@ -109,37 +109,59 @@ import google.generativeai as genai
 # Configure Gemini with your Render Key (already added in environment)
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 
+# app.py: Replace the old chat_gemini function with this
 @app.route('/api/gemini', methods=['POST'])
-def chat_gemini():
+def chat_gemini_stream():
     try:
         data = request.get_json()
         prompt = data.get("prompt", "")
 
         if not prompt:
+            # We must return a normal JSON error here, not SSE
             return jsonify({"error": "Missing prompt"}), 400
-
-        system_instruction = (
-            "You are PrepAura Nexus, a helpful, but **highly concise** assistant. "
-            "Keep your answers brief, under 100 words, and use **simple HTML tags** "
-            "(like <strong>, <br>, <ul>, <li>) instead of Markdown for clean display.")
 
         model = genai.GenerativeModel("models/gemini-flash-latest")
 
-        # Gemini now needs array format
-        response = model.generate_content([prompt])
+        # System Instruction for Conciseness and HTML (Crucial for formatting and length)
+        system_instruction = (
+           "You are PrepAura Nexus, a helpful, but **highly concise** assistant. "
+            "Keep your answers brief, under 80 words. "
+            "**ABSOLUTELY DO NOT USE MARKDOWN (e.g., **, ##, -, *, |)**. "
+            "Use only basic HTML tags for formatting (e.g., <strong>, <br>, <ul>, <li>) "
+            "for all text, headings, and lists."
+        )
 
-        # Extract text correctly
-        reply = ""
-        try:
-            reply = response.candidates[0].content.parts[0].text
-        except:
-            reply = response.text if hasattr(response, "text") else str(response)
+        def stream_gemini_response():
+            try:
+                # ⭐️ Use the streaming API ⭐️
+                response_stream = model.generate_content_stream([system_instruction, prompt])
+                
+                for chunk in response_stream:
+                    # Escape newlines for transport, but primarily use the white-space: pre-wrap on the front end
+                    # We only send the text part of the chunk
+                    if chunk.text:
+                        # ⭐️ SSE format: data: [content]\n\n ⭐️
+                        # The replace call is a small safety measure against malformed SSE events
+                        yield f"data: {chunk.text}\n\n" 
+                
+                # Signal the end of the stream
+                yield "data: [DONE]\n\n"
 
-        return jsonify({"reply": reply})
+            except Exception as e:
+                # Log error and send an error message to the client
+                print(f"Gemini Streaming Error: {e}")
+                yield f"data: [ERROR] An error occurred: {str(e)}\n\n"
+
+        # ⭐️ Return the response as a stream with the text/event-stream MIME type ⭐️
+        return Response(
+            stream_with_context(stream_gemini_response()),
+            mimetype='text/event-stream'
+        )
 
     except Exception as e:
-        print("Gemini Error:", e)
-        return jsonify({"error": "Server Error"}), 500
+        print("API Setup Error:", e)
+        # For setup/non-streaming errors, return standard JSON error
+        return jsonify({"error": "Server Setup Error"}), 500
 
 
 # Serve frontend files from the parent 'frontend' folder

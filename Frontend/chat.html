@@ -131,49 +131,120 @@
       const sendBtn = document.getElementById('sendBtn');
       const typing = document.getElementById('typingIndicator');
 
-      function appendMsg(text, who='ai') {
-        const wrap = document.createElement('div');
-        wrap.className = 'msg ' + (who === 'user' ? 'user' : 'ai');
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble ' + (who === 'user' ? 'user' : 'ai');
-        bubble.innerHTML = text;
-        wrap.appendChild(bubble);
-        chatBody.appendChild(wrap);
-        chatBody.scrollTop = chatBody.scrollHeight;
-      }
+      // chat.html: inside (function(){...})
 
-      async function sendQuestion(q) {
+    let currentAIBubble = null; // Variable to hold the reference to the current streaming bubble
+
+    function appendMsg(text, who='ai', isNewMessage=true) {
+      if (isNewMessage) {
+          // Create a new bubble for the start of a message
+          const wrap = document.createElement('div');
+          wrap.className = 'msg ' + (who === 'user' ? 'user' : 'ai');
+          const bubble = document.createElement('div');
+          bubble.className = 'bubble ' + (who === 'user' ? 'user' : 'ai');
+          bubble.innerHTML = text;
+          wrap.appendChild(bubble);
+          chatBody.appendChild(wrap);
+          
+          if (who === 'ai') {
+              currentAIBubble = bubble; // Store the reference
+          }
+      } else if (currentAIBubble && who === 'ai') {
+          // Append text chunk to the existing AI bubble
+          currentAIBubble.innerHTML += text;
+      } else {
+          // Fallback for non-streaming user messages
+          const wrap = document.createElement('div');
+          wrap.className = 'msg ' + (who === 'user' ? 'user' : 'ai');
+          const bubble = document.createElement('div');
+          bubble.className = 'bubble ' + (who === 'user' ? 'user' : 'ai');
+          bubble.innerHTML = text;
+          wrap.appendChild(bubble);
+          chatBody.appendChild(wrap);
+      }
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+      // chat.html: replace existing sendQuestion
+    async function sendQuestion(q) {
         if (!q || q.trim()==='') return;
+        
+        // User message is a new message
         appendMsg(q, 'user');
         input.value = '';
         typing.style.display = 'inline';
         sendBtn.disabled = true;
 
+        // Start a new AI bubble for streaming (passing the first chunk as empty)
+        appendMsg("", 'ai', true); 
+
         try {
-          // NOTE: Replace /api/gemini with your backend endpoint that proxies to Gemini securely.
-          const res = await fetch("https://prepmate-backend-x77z.onrender.com/api/gemini", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: q })
-          });
+            // We use fetch here to send the POST data first.
+            // The endpoint is still the same, but it now returns an event stream.
+            const req = await fetch("https://prepmate-backend-x77z.onrender.com/api/gemini", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: q })
+            });
+            
+            if (!req.ok) {
+                const text = await req.text();
+                appendMsg("⚠️ Error: " + req.status + " — " + (text || req.statusText), 'ai', false); // Update existing bubble
+                return;
+            }
 
-          if (!res.ok) {
-            const text = await res.text();
-            appendMsg("⚠️ Error: " + res.status + " — " + (text || res.statusText));
-            return;
-          }
-          const json = await res.json();
-          // expected json shape: { reply: "..." }
-          appendMsg(json.reply || "No reply from model.");
+            // Get the reader from the streamed response body
+            const reader = req.body.getReader();
+            const decoder = new TextDecoder("utf-8");
+            
+            let done = false;
+            let buffer = "";
+
+            while (!done) {
+                const { value, done: streamDone } = await reader.read();
+                done = streamDone;
+                
+                if (value) {
+                    buffer += decoder.decode(value, { stream: true });
+                    
+                    // Process the buffer for complete SSE events
+                    let events = buffer.split('\n\n');
+                    buffer = events.pop(); // Keep the potentially incomplete last chunk in the buffer
+
+                    for (let event of events) {
+                        if (event.startsWith('data: ')) {
+                            const data = event.substring(6); // Remove 'data: ' prefix
+                            
+                            if (data === '[DONE]') {
+                                // End of stream signal
+                                done = true;
+                                break;
+                            }
+                            if (data.startsWith('[ERROR]')) {
+                                // Handle error sent from backend stream
+                                appendMsg(data, 'ai', false);
+                                done = true;
+                                break;
+                            }
+
+                            // Append the new chunk to the existing AI bubble
+                            appendMsg(data, 'ai', false); 
+                        }
+                    }
+                }
+            }
+            
+            // Final cleanup after stream is complete
+            currentAIBubble = null;
+
         } catch (err) {
-          console.error(err);
-          appendMsg("⚠️ Network error. Check backend or internet.");
+            console.error(err);
+            appendMsg("⚠️ Network error. Check backend or internet.", 'ai', false);
         } finally {
-          typing.style.display = 'none';
-          sendBtn.disabled = false;
+            typing.style.display = 'none';
+            sendBtn.disabled = false;
         }
-      }
-
+    }
       sendBtn.addEventListener('click', ()=> sendQuestion(input.value));
       input.addEventListener('keydown', (e)=> { if(e.key === 'Enter') sendQuestion(input.value); });
 
