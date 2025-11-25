@@ -118,6 +118,11 @@ def chat_gemini():
         if not prompt:
             return jsonify({"error": "Missing prompt"}), 400
 
+        system_instruction = (
+            "You are PrepAura Nexus, a helpful, but **highly concise** assistant. "
+            "Keep your answers brief, under 100 words, and use **simple HTML tags** "
+            "(like <strong>, <br>, <ul>, <li>) instead of Markdown for clean display.")
+
         model = genai.GenerativeModel("models/gemini-flash-latest")
 
         # Gemini now needs array format
