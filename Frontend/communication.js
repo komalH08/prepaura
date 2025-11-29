@@ -221,86 +221,85 @@ function initializeApp() {
 
   // --- 9. GET FEEDBACK ---
   async function getFeedback() {
-    if (!recordedAudioBlob) {
-      alert("No audio was recorded.");
-      return;
-    }
+  if (!recordedAudioBlob) {
+    alert("No audio was recorded.");
+    return;
+  }
 
-    spinnerTest.innerText = "Analyzing your performance...";
-    loadingSpinner.style.display = "flex";
-    practiceScreen.classList.add("hidden");
-    feedbackScreen.classList.remove("hidden");
-    feedbackReport.innerText = "Thinking... 🤔";
-    
-    const formData = new FormData();
-    formData.append("audio_file", recordedAudioBlob, "answer.webm");
-    formData.append("question", currentTopicData.topic); 
-    formData.append("expressions", JSON.stringify(expressionData));
+  spinnerTest.innerText = "Analyzing your performance...";
+  loadingSpinner.style.display = "flex";
+  practiceScreen.classList.add("hidden");
+  feedbackScreen.classList.remove("hidden");
 
-    try {
-      const response = await fetch("https://prepmate-backend-x77z.onrender.com/communication-feedback", {
+  const formData = new FormData();
+  formData.append("audio_file", recordedAudioBlob, "answer.webm");
+  formData.append("question", currentTopicData.topic);
+  formData.append("expressions", JSON.stringify(expressionData));
+
+  try {
+    const response = await fetch(
+      "https://prepmate-backend-x77z.onrender.com/communication-feedback",
+      {
         method: "POST",
-        body: formData, 
+        body: formData,
+      }
+    );
+
+    const data = await response.json();
+    const fb = data.feedback || "No feedback received.";
+
+    // ---------------- SCORE ----------------
+    let score = 80;
+    if (fb.toLowerCase().includes("slow")) score -= 10;
+    if (fb.toLowerCase().includes("fast")) score -= 10;
+    if (fb.toLowerCase().includes("filler")) score -= 10;
+
+    document.getElementById("comm-score").innerText = score;
+
+    // ---------------- FILL UI CARDS ----------------
+    document.getElementById("ai-summary").innerHTML = fb;
+
+    document.getElementById("ai-delivery").innerHTML =
+      fb.toLowerCase().includes("pace")
+        ? fb
+        : "Your speaking pace analysis will appear here.";
+
+    document.getElementById("ai-expression").innerHTML =
+      fb.toLowerCase().includes("expression")
+        ? fb
+        : "Your facial expression analysis will appear here.";
+
+    document.getElementById("ai-key").innerHTML =
+      "Improve clarity, maintain steady pace, and reduce filler words.";
+
+    // ---------------- RING ANIMATION ----------------
+    const circle = document.querySelector(".apt-score-progress");
+    const r = 60;
+    const c = 2 * Math.PI * r;
+
+    circle.style.strokeDasharray = `${c} ${c}`;
+    setTimeout(() => {
+      circle.style.strokeDashoffset = c * (1 - score / 100);
+    }, 300);
+
+    // ---------------- DOWNLOAD BUTTON ----------------
+    document
+      .getElementById("download-comm-report")
+      .addEventListener("click", async () => {
+        const node = document.querySelector(".apt-report");
+        if (window.html2canvas) {
+          const canvas = await html2canvas(node);
+          const link = document.createElement("a");
+          link.download = "communication-report.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        }
       });
-      
-      const data = await response.json();
-      
-      // ---------------- NEW REPORT UI INSERT ----------------
-      const fb = data.feedback || "";
+  } catch (err) {
+    document.getElementById("ai-summary").innerHTML =
+      "⚠️ Could not connect to server.";
+  }
 
-      // --- Simple scoring (you can adjust later) ---
-      let score = 80;
-      if (fb.toLowerCase().includes("slow")) score -= 10;
-      if (fb.toLowerCase().includes("fast")) score -= 10;
-      if (fb.toLowerCase().includes("filler")) score -= 10;
-
-      document.getElementById("comm-score").innerText = score;
-
-      // --- Fill the 4 report boxes ---
-      document.getElementById("ai-summary").innerHTML = fb;
-
-      // If backend later includes sections like "Pace:", "Expression:" you can parse them
-      document.getElementById("ai-delivery").innerHTML =
-        fb.includes("pace") ? fb : "Your speaking pace analysis will appear here.";
-
-      document.getElementById("ai-expression").innerHTML =
-        fb.includes("expression") ? fb : "Your facial expression analysis will appear here.";
-
-      document.getElementById("ai-key").innerHTML =
-        "Improve clarity, maintain steady pace, and reduce fillers for better communication.";
-
-      // --- Animate progress ring ---
-      const circle = document.querySelector(".apt-score-progress");
-      const radius = 60;
-      const circ = 2 * Math.PI * radius;
-
-      circle.style.strokeDasharray = `${circ} ${circ}`;
-      setTimeout(() => {
-        circle.style.strokeDashoffset = circ * (1 - score/100);
-      }, 200);
-
-      // --- Download Report Button ---
-      document
-        .getElementById("download-comm-report")
-        .addEventListener("click", async () => {
-          if (window.html2canvas) {
-            const node = document.querySelector(".apt-report");
-            const canvas = await window.html2canvas(node, { backgroundColor: null });
-            const link = document.createElement("a");
-            link.href = canvas.toDataURL("image/png");
-            link.download = "communication-report.png";
-            link.click();
-          } else {
-            window.print();
-          }
-        });
-      // -------------------------------------------------------
-
-            
-    } catch (error) {
-      feedbackReport.innerText = "⚠️ Server offline.";
-    }
-    
     loadingSpinner.style.display = "none";
   }
   
