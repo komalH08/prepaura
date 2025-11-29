@@ -108,62 +108,33 @@ import google.generativeai as genai
 
 # Configure Gemini with your Render Key (already added in environment)
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-client = genai.Client()
-# app.py: Replace the old chat_gemini function with this
+
 @app.route('/api/gemini', methods=['POST'])
-def chat_gemini_stream():
+def chat_gemini():
     try:
         data = request.get_json()
         prompt = data.get("prompt", "")
 
         if not prompt:
-            # We must return a normal JSON error here, not SSE
             return jsonify({"error": "Missing prompt"}), 400
 
+        model = genai.GenerativeModel("gemini-1.5-flash")
 
-        # System Instruction for Conciseness and HTML (Crucial for formatting and length)
-        system_instruction = (
-           "You are PrepAura Nexus, a helpful, but **highly concise** assistant. "
-            "Keep your answers brief, under 80 words. "
-            "**ABSOLUTELY DO NOT USE MARKDOWN (e.g., **, ##, -, *, |)**. "
-            "Use only basic HTML tags for formatting (e.g., <strong>, <br>, <ul>, <li>) "
-            "for all text, headings, and lists."
-        )
+        # ❗ google-generativeai 0.8.5 uses this function:
+        response = model.generate_content(prompt)
 
-        def stream_gemini_response():
-            try:
-                #use clients models streaming method
-                response_stream = client.models.generate_content_stream(
-                    model="models/gemini-1.5-flash-latest",
-                    contents=[system_instruction, prompt] 
-                )
-                
-                for chunk in response_stream:
-                    # Escape newlines for transport, but primarily use the white-space: pre-wrap on the front end
-                    # We only send the text part of the chunk
-                    if chunk.text:
-                        # ⭐️ SSE format: data: [content]\n\n ⭐️
-                        # The replace call is a small safety measure against malformed SSE events
-                        yield f"data: {chunk.text}\n\n" 
-                
-                # Signal the end of the stream
-                yield "data: [DONE]\n\n"
+        # Extract text safely
+        reply = ""
+        try:
+            reply = response.text
+        except:
+            reply = str(response)
 
-            except Exception as e:
-                # Log error and send an error message to the client
-                print(f"Gemini Streaming Error: {e}")
-                yield f"data: [ERROR] An error occurred: {str(e)}\n\n"
-
-        # ⭐️ Return the response as a stream with the text/event-stream MIME type ⭐️
-        return Response(
-            stream_with_context(stream_gemini_response()),
-            mimetype='text/event-stream'
-        )
+        return jsonify({"reply": reply})
 
     except Exception as e:
-        print("API Setup Error:", e)
-        # For setup/non-streaming errors, return standard JSON error
-        return jsonify({"error": "Server Setup Error"}), 500
+        print("Gemini Error:", e)
+        return jsonify({"error": "Server Error"}), 500
 
 
 # Serve frontend files from the parent 'frontend' folder
