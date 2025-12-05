@@ -118,7 +118,7 @@
     </div>
 
     <div class="meta-note">
-      Responses are powered via Gemini. This client uses a backend proxy to call the model (your API key stays server-side).
+      Responses are powered via Gemini.
       <span id="typingIndicator" class="typing" style="display:none">Nexus is typing…</span>
     </div>
   </main>
@@ -158,14 +158,14 @@
           }
       } else if (currentAIBubble && who === 'ai') {
           // Append text chunk to the existing AI bubble
-            currentAIBubble.innerHTML += text.replace(/<\/?p>/gi, '');
+          currentAIBubble.innerHTML += text.replace(/<\/?p>/gi, '');
       } else {
           // Fallback for non-streaming user messages
           const wrap = document.createElement('div');
           wrap.className = 'msg ' + (who === 'user' ? 'user' : 'ai');
           const bubble = document.createElement('div');
           bubble.className = 'bubble ' + (who === 'user' ? 'user' : 'ai');
-          bubble.innerHTML = text.replace(/<\/?p>/gi, '');
+          bubble.innerHTML = text;
           wrap.appendChild(bubble);
           chatBody.appendChild(wrap);
       }
