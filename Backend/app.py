@@ -14,13 +14,11 @@ from ai_logic import (
     get_managerial_response,
     get_hr_response,
     get_resume_response,
-    get_final_report
+    get_final_report,
+    client
 )
 import os
 import time 
-
-# In ai_logic.py
-client = genai.Client(api_key=GEMINI_API_KEY)
 
 # ⭐️ --- NEW AUTH & DB IMPORTS --- ⭐️
 from flask_sqlalchemy import SQLAlchemy
