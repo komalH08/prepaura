@@ -380,11 +380,19 @@ def get_aptitude_feedback(results):
     Their results are provided in this JSON list:
     {results_json}
 
-    Please provide a concise feedback report in Markdown.
-    1.  Start with an "Overall Summary" (e.g., "You answered X out of Y questions correctly.").
-    2.  Identify their "Strongest Topic" (the topic with the most correct answers).
-    3.  Identify the "Weakest Topic" (the topic with the most incorrect answers).
-    4.  Give one "Key Takeaway" or piece of advice (e.g., "focus on time management," "double-check your calculations," etc.).
+    Provide a report in EXACTLY this format:
+
+    ### OVERALL SUMMARY
+    [2-3 sentences here]
+
+    ### STRONGEST TOPIC
+    [Topic name and why]
+
+    ### WEAKEST TOPIC
+    [Topic name and why]
+
+    ### KEY TAKEAWAY
+    [One piece of advice]
     
     Keep the feedback encouraging and brief.
     """
@@ -400,7 +408,7 @@ def get_aptitude_feedback(results):
         print("Error: Gemini returned an empty response.")
         return "Error: The AI failed to generate feedback."
         
-    return response.text
+    return response.text.strip()
 
 @handle_gemini_errors
 def get_technical_question(topic, language):

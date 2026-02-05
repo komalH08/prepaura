@@ -404,10 +404,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const fb = json.feedback || "";
 
             // Extract sections using robust regex
-            const summaryMatch = fb.match(/###.*Overall Summary([\s\S]*?)###/);
-            const strongMatch  = fb.match(/###.*Strongest([\s\S]*?)###/);
-            const weakMatch    = fb.match(/###.*Weakest([\s\S]*?)###/);
-            const keyMatch     = fb.match(/###.*Key Takeaway([\s\S]*)/);
+            const summaryMatch = fb.match(/###\s*Overall Summary([\s\S]*?)(?=###|$)/i);
+const strongMatch  = fb.match(/###\s*Strongest Topic([\s\S]*?)(?=###|$)/i);
+const weakMatch    = fb.match(/###\s*Weakest Topic([\s\S]*?)(?=###|$)/i);
+const keyMatch     = fb.match(/###\s*Key Takeaway([\s\S]*?)(?=###|$)/i);
 
             const conv = (txt) => {
                 if (typeof convertMarkdownToProHTML === "function") return convertMarkdownToProHTML(txt || "");
