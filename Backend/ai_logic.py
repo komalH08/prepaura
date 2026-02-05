@@ -572,10 +572,12 @@ def get_communication_feedback(topic, user_answer, expression_data_json, duratio
     [2-3 sentences on the content and addressing the topic]
 
     ### DELIVERY AND PACE
-    [Analysis of pace: {audio_analysis_summary}]
+    [Analysis of pace: {audio_analysis_summary}. Then provide 1-2 sentences of coaching. 
+    If slow, suggest techniques for fluency: if fast, suggest pausing for emphais.]
 
     ### EXPRESSION ANALYSIS
-    [Analysis of facial data: {expression_summary}]
+    [Analysis of facial data: {expression_summary}. Then, provide 1-2 sentences of coaching. 
+    If neutral, suggest using facial variations to match the topic's emotion to build rapport.]
 
     ### KEY TAKEAWAY
     [One actionable piece of advice]
