@@ -48,10 +48,16 @@ function initializeApp() {
   function convertMarkdownToProHTML(md) {
       if (!md) return "";
 
-      md = md.replace(/^### (.*$)/gim, '<div class="ai-mini-heading">$1</div>');
-      md = md.replace(/^- (.*$)/gim, '<div class="ai-bullet">• $1</div>');
+      md = md.replace(/^\s*###\s*(.*$)/gim, '<div class="ai-mini-heading">$1</div>');
+
+      md = md.replace(/^\s*##\s*(.*$)/gim, '<div class="ai-mini-heading">$1</div>');
+
+      md = md.replace(/^\s*[-*]\s*(.*$)/gim, '<div class="ai-bullet">• $1</div>');
+
       md = md.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
+
       md = md.replace(/`(.*?)`/gim, '<code class="ai-inline-code">$1</code>');
+
       md = md.replace(/\n/g, '<br>');
 
       return md;
