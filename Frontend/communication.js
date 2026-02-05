@@ -48,16 +48,16 @@ function initializeApp() {
   function convertMarkdownToProHTML(md) {
       if (!md) return "";
 
-      md = md.replace(/^\s*###\s*(.*$)/gim, '<div class="ai-mini-heading">$1</div>');
+      // Handle headers (### or ##) with optional leading whitespace
+      md = md.replace(/^\s*#{2,3}\s*(.*$)/gim, '<div class="ai-mini-heading">$1</div>');
 
-      md = md.replace(/^\s*##\s*(.*$)/gim, '<div class="ai-mini-heading">$1</div>');
-
+      // Handle bullet points (starting with - or *)
       md = md.replace(/^\s*[-*]\s*(.*$)/gim, '<div class="ai-bullet">• $1</div>');
 
+      // Handle Bold (**text**)
       md = md.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
 
-      md = md.replace(/`(.*?)`/gim, '<code class="ai-inline-code">$1</code>');
-
+      // Handle New lines
       md = md.replace(/\n/g, '<br>');
 
       return md;
@@ -239,85 +239,88 @@ function initializeApp() {
     }
   }
 
-  // --- 9. GET FEEDBACK ---
+// --- 9. GET FEEDBACK (UPDATED WITH SECTION SPLITTING) ---
   async function getFeedback() {
-  if (!recordedAudioBlob) {
-    alert("No audio was recorded.");
-    return;
-  }
+    if (!recordedAudioBlob) {
+      alert("No audio was recorded.");
+      return;
+    }
 
-  spinnerTest.innerText = "Analyzing your performance...";
-  loadingSpinner.style.display = "flex";
-  practiceScreen.classList.add("hidden");
-  feedbackScreen.classList.remove("hidden");
+    spinnerTest.innerText = "Analyzing your performance...";
+    loadingSpinner.style.display = "flex";
+    practiceScreen.classList.add("hidden");
+    feedbackScreen.classList.remove("hidden");
 
-  const formData = new FormData();
-  formData.append("audio_file", recordedAudioBlob, "answer.webm");
-  formData.append("question", currentTopicData.topic);
-  formData.append("expressions", JSON.stringify(expressionData));
+    const formData = new FormData();
+    formData.append("audio_file", recordedAudioBlob, "answer.webm");
+    formData.append("question", currentTopicData.topic);
+    formData.append("expressions", JSON.stringify(expressionData));
 
-  try {
-    const response = await fetch(
-      "https://prepmate-backend-x77z.onrender.com/communication-feedback",
-      {
-        method: "POST",
-        body: formData,
+    try {
+      const response = await fetch(
+        "https://prepmate-backend-x77z.onrender.com/communication-feedback",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+      const fb = data.feedback || "";
+
+      if (data.error) {
+        document.getElementById("ai-summary").innerHTML = `<div class="ai-content">⚠️ ${data.error}</div>`;
+        loadingSpinner.style.display = "none";
+        return;
       }
-    );
 
-    const data = await response.json();
-    const fb = data.feedback || "No feedback received.";
+      // 1. Robust Case-Insensitive Regex Splitting (Matches the backend headers)
+      const summaryMatch = fb.match(/###\s*Overall Summary([\s\S]*?)(?=###|$)/i);
+      const deliveryMatch = fb.match(/###\s*Delivery and Pace([\s\S]*?)(?=###|$)/i);
+      const expressionMatch = fb.match(/###\s*Expression Analysis([\s\S]*?)(?=###|$)/i);
+      const keyMatch = fb.match(/###\s*Key Takeaway([\s\S]*?)(?=###|$)/i);
 
-    // ---------------- SCORE ----------------
-    let score = 80;
-    if (fb.toLowerCase().includes("slow")) score -= 10;
-    if (fb.toLowerCase().includes("fast")) score -= 10;
-    if (fb.toLowerCase().includes("filler")) score -= 10;
+      const conv = (txt) => {
+        return convertMarkdownToProHTML(txt ? txt.trim() : "Analysis unavailable.");
+      };
 
-    document.getElementById("comm-score").innerText = score;
+      // 2. ---------------- SCORE CALCULATION ----------------
+      let score = 80;
+      if (fb.toLowerCase().includes("slow")) score -= 10;
+      if (fb.toLowerCase().includes("fast")) score -= 10;
+      if (fb.toLowerCase().includes("filler")) score -= 10;
+      document.getElementById("comm-score").innerText = score;
 
-    // ---------------- FILL UI CARDS ----------------
-    document.getElementById("ai-summary").innerHTML = convertMarkdownToProHTML(fb);;
+      // 3. ---------------- FILL UI CARDS ----------------
+      // If summaryMatch fails, fallback to first 300 chars of full feedback
+      document.getElementById("ai-summary").innerHTML = conv(summaryMatch ? summaryMatch[1] : fb.slice(0, 300));
+      document.getElementById("ai-delivery").innerHTML = conv(deliveryMatch ? deliveryMatch[1] : "Pace analysis unavailable.");
+      document.getElementById("ai-expression").innerHTML = conv(expressionMatch ? expressionMatch[1] : "Expression analysis unavailable.");
+      document.getElementById("ai-key").innerHTML = conv(keyMatch ? keyMatch[1] : "Maintain steady eye contact and confidence.");
 
-    document.getElementById("ai-delivery").innerHTML =
-      fb.toLowerCase().includes("pace")
-        ? fb
-        : "Your speaking pace analysis will appear here.";
+      // 4. ---------------- RING ANIMATION ----------------
+      const circle = document.querySelector(".apt-score-progress");
+      const r = 60;
+      const c = 2 * Math.PI * r;
+      circle.style.strokeDasharray = `${c} ${c}`;
+      setTimeout(() => {
+        circle.style.strokeDashoffset = c * (1 - score / 100);
+      }, 300);
 
-    document.getElementById("ai-expression").innerHTML =
-      fb.toLowerCase().includes("expression")
-        ? fb
-        : "Your facial expression analysis will appear here.";
-
-    document.getElementById("ai-key").innerHTML =
-      "Improve clarity, maintain steady pace, and reduce filler words.";
-
-    // ---------------- RING ANIMATION ----------------
-    const circle = document.querySelector(".apt-score-progress");
-    const r = 60;
-    const c = 2 * Math.PI * r;
-
-    circle.style.strokeDasharray = `${c} ${c}`;
-    setTimeout(() => {
-      circle.style.strokeDashoffset = c * (1 - score / 100);
-    }, 300);
-
-    // ---------------- DOWNLOAD BUTTON ----------------
-    document.getElementById("download-comm-report")
-      .addEventListener("click", async () => {
+      // 5. ---------------- DOWNLOAD BUTTON ----------------
+      document.getElementById("download-comm-report").addEventListener("click", async () => {
         const node = document.querySelector(".apt-report");
         if (window.html2canvas) {
           const canvas = await html2canvas(node);
           const link = document.createElement("a");
-          link.download = "communication-report.png";
+          link.download = `communication-report-${Date.now()}.png`;
           link.href = canvas.toDataURL("image/png");
           link.click();
         }
       });
-  } catch (err) {
-    document.getElementById("ai-summary").innerHTML =
-      "⚠️ Could not connect to server.";
-  }
+    } catch (err) {
+      document.getElementById("ai-summary").innerHTML = "⚠️ Could not connect to server.";
+    }
 
     loadingSpinner.style.display = "none";
   }

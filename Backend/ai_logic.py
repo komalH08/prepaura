@@ -558,8 +558,7 @@ def get_communication_feedback(topic, user_answer, expression_data_json, duratio
 
     prompt = f"""
     ## Role: AI Communication Coach
-    ## Task: Provide feedback on a user's 1-minute speech.
-    ## Output Format: Markdown
+    ## Task: Provide a structured report on a user's 1-minute speech.
 
     **Topic:**
     {topic}
@@ -567,41 +566,33 @@ def get_communication_feedback(topic, user_answer, expression_data_json, duratio
     **User's Speech:**
     "{user_answer}"
 
-    ---
-    ### **Analysis:**
+    Format your response EXACTLY with these headers:
     
-    #### 1. Content & Structure
-    - Did they address the topic?
-    - Was the speech structured (e.g., intro, body, conclusion)?
-    
-    #### 2. Communication & Delivery
-    - **Audio Analysis:**
-    {audio_analysis_summary}
-    - **Expression Analysis:**
-    {expression_summary}
+    ### OVERALL SUMMARY
+    [2-3 sentences on the content and addressing the topic]
 
-    ---
-    ### **Feedback:**
+    ### DELIVERY AND PACE
+    [Analysis of pace: {audio_analysis_summary}]
 
-    **1. Clarity & Structure:**
-    [Provide 2-3 sentences on their content. Example: "You did a great job addressing the topic directly. Your points were clear. To improve, try adding a brief introduction and a concluding sentence to structure your thoughts."]
+    ### EXPRESSION ANALYSIS
+    [Analysis of facial data: {expression_summary}]
 
-    **2. Delivery & Engagement:**
-    [Provide 1-2 sentences on their delivery, using audio/expression analysis. Example: "Your pace was excellent and you spoke confidently. Your facial expressions were neutral; try to use more varied expressions to show engagement with the topic."]
+    ### KEY TAKEAWAY
+    [One actionable piece of advice]
     """
     response = client.models.generate_content(
         model="gemini-3-flash-preview",
         config=types.GenerateContentConfig(
             thinking_config=types.ThinkingConfig(include_thoughts=True)
         ),
-        contents=prompt
+        contents=[prompt]
     )
 
     if not response.text:
         print("Error: Gemini returned an empty response.")
         return "Error: The AI failed to generate feedback."
         
-    return response.text
+    return response.text.strip()
 
 @handle_gemini_errors
 def generate_communication_topic():
