@@ -435,7 +435,8 @@ def managerial_conversation():
         conversation_history,
         user_answer_text,
         expression_data_json,
-        audio_file_path
+        audio_file_path,
+        duration_seconds=0
     )
     
     if audio_file_path:
@@ -475,7 +476,8 @@ def hr_conversation():
         conversation_history,
         user_answer_text,
         expression_data_json,
-        audio_file_path
+        audio_file_path,
+        duration_seconds=0
     )
     
     if audio_file_path:
@@ -541,7 +543,8 @@ def resume_conversation():
         conversation_history,
         user_answer_text,
         expression_data_json,
-        audio_file_path
+        audio_file_path,
+        duration_seconds=0
     )
     
     if audio_file_path:

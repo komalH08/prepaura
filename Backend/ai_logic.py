@@ -633,7 +633,7 @@ def generate_communication_topic():
         return {"error": "The AI returned an invalid response. Please try again."}
 
 @handle_gemini_errors 
-def get_managerial_response(conversation_history, user_answer, expression_data_json, audio_file_path):
+def get_managerial_response(conversation_history, user_answer, expression_data_json, audio_file_path, duration_seconds=0):
     history = json.loads(conversation_history)
     
     custom_prompt = None
@@ -667,6 +667,17 @@ def get_managerial_response(conversation_history, user_answer, expression_data_j
         session_complete = True
         ai_response = "This concludes the managerial round. Generating your final debrief..."
         
+        words = user_answer.split() if user_answer else []
+        word_count = len(words)
+
+        actual_wpm = 0
+        if duration_seconds > 0:
+            duration_minutes = duration_seconds / 60.0
+            actual_wpm = int(word_count / duration_minutes)
+
+        filler_words = ['um', 'uh', 'like', 'so', 'you know', 'basically', 'actually']
+        final_fillers = sum(1 for word in words if word.lower().strip(",.") in filler_words)
+
         # Create the report prompt
         history_text = "\n".join([f"{msg['role']}: {msg['parts'][0]['text']}" for msg in history if 'parts' in msg])
         report_prompt = f"""
@@ -691,7 +702,7 @@ def get_managerial_response(conversation_history, user_answer, expression_data_j
         - [List 1-2 specific, actionable areas for improvement, e.g., "Try to provide more detail on the 'Result' of your stories," "Answers could be more concise."]
         """
         final_report_response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-3-flash",
             config=types.GenerateContentConfig(
                 thinking_config=types.ThinkingConfig(include_thoughts=True)
             ),
@@ -700,8 +711,13 @@ def get_managerial_response(conversation_history, user_answer, expression_data_j
         final_report = final_report_response.text or "Error: The AI failed to generate your final report."
         
         return {
-            "ai_response": ai_response, "user_transcript": transcribed_text,
-            "updated_history": history, "session_complete": True, "final_report": final_report
+            "ai_response": ai_response, 
+            "user_transcript": transcribed_text,
+            "updated_history": history, 
+            "session_complete": True, 
+            "final_report": final_report,
+            "final_wpm": actual_wpm, # Replace with your calculated 'wpm' variable
+            "final_fillers": final_fillers
         }
     
     chat_session = client.chats.create(
@@ -724,7 +740,7 @@ def get_managerial_response(conversation_history, user_answer, expression_data_j
 
 
 @handle_gemini_errors 
-def get_hr_response(conversation_history, user_answer, expression_data_json, audio_file_path):
+def get_hr_response(conversation_history, user_answer, expression_data_json, audio_file_path, duration_seconds=0):
     history = json.loads(conversation_history)
     
     custom_prompt = None
@@ -756,6 +772,17 @@ def get_hr_response(conversation_history, user_answer, expression_data_json, aud
         session_complete = True
         ai_response = "This concludes the HR interview. Generating your final debrief..."
         
+        words = user_answer.split() if user_answer else []
+        word_count = len(words)
+
+        actual_wpm = 0
+        if duration_seconds > 0:
+            duration_minutes = duration_seconds / 60.0
+            actual_wpm = int(word_count / duration_minutes)
+
+        filler_words = ['um', 'uh', 'like', 'so', 'you know', 'basically', 'actually']
+        final_fillers = sum(1 for word in words if word.lower().strip(",.") in filler_words)
+
         # Create the report prompt
         history_text = "\n".join([f"{msg['role']}: {msg['parts'][0]['text']}" for msg in history if 'parts' in msg])
         report_prompt = f"""
@@ -790,8 +817,13 @@ def get_hr_response(conversation_history, user_answer, expression_data_json, aud
         final_report = final_report_response.text or "Error: The AI failed to generate your final report."
         
         return {
-            "ai_response": ai_response, "user_transcript": transcribed_text,
-            "updated_history": history, "session_complete": True, "final_report": final_report
+            "ai_response": ai_response, 
+            "user_transcript": transcribed_text,
+            "updated_history": history, 
+            "session_complete": True, 
+            "final_report": final_report,
+            "final_wpm": actual_wpm, # Replace with your calculated 'wpm' variable
+            "final_fillers": final_fillers
         }
     
     # New way to start a chat session
@@ -816,7 +848,7 @@ def get_hr_response(conversation_history, user_answer, expression_data_json, aud
 
 
 @handle_gemini_errors
-def get_resume_response(resume_text, conversation_history, user_answer, expression_data_json, audio_file_path):
+def get_resume_response(resume_text, conversation_history, user_answer, expression_data_json, audio_file_path, duration_seconds=0):
     history = json.loads(conversation_history)
     
     custom_prompt = None
@@ -856,6 +888,17 @@ def get_resume_response(resume_text, conversation_history, user_answer, expressi
         session_complete = True
         ai_response = "This concludes the Resume-Based interview. Generating your final debrief..."
         
+        words = user_answer.split() if user_answer else []
+        word_count = len(words)
+
+        actual_wpm = 0
+        if duration_seconds > 0:
+            duration_minutes = duration_seconds / 60.0
+            actual_wpm = int(word_count / duration_minutes)
+
+        filler_words = ['um', 'uh', 'like', 'so', 'you know', 'basically', 'actually']
+        final_fillers = sum(1 for word in words if word.lower().strip(",.") in filler_words)
+
         # Create the report prompt
         history_text = "\n".join([f"{msg['role']}: {msg['parts'][0]['text']}" for msg in history if 'parts' in msg])
         report_prompt = f"""
@@ -890,8 +933,13 @@ def get_resume_response(resume_text, conversation_history, user_answer, expressi
         final_report = final_report_response.text or "Error: The AI failed to generate your final report."
         
         return {
-            "ai_response": ai_response, "user_transcript": transcribed_text,
-            "updated_history": history, "session_complete": True, "final_report": final_report
+            "ai_response": ai_response, 
+            "user_transcript": transcribed_text,
+            "updated_history": history, 
+            "session_complete": True, 
+            "final_report": final_report,
+            "final_wpm": actual_wpm, # Replace with your calculated 'wpm' variable
+            "final_fillers": final_fillers
         }
 
     chat_session = client.chats.create(
