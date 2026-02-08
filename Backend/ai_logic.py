@@ -640,7 +640,7 @@ def get_managerial_response(conversation_history, user_answer, expression_data_j
     if history and history[-1].get('role') == 'system':
         custom_prompt = history.pop()['content'] 
         
-    question_count = len([msg for msg in history if msg['role'] == 'ai'])
+    question_count = len([msg for msg in history if msg['role'] == 'model'])
     
     transcribed_text = user_answer
     session_complete = False
@@ -668,7 +668,7 @@ def get_managerial_response(conversation_history, user_answer, expression_data_j
         ai_response = "This concludes the managerial round. Generating your final debrief..."
         
         # Create the report prompt
-        history_text = "\n".join([f"{msg['role']}: {msg['content']}" for msg in history])
+        history_text = "\n".join([f"{msg['role']}: {msg['parts'][0]['text']}" for msg in history if 'parts' in msg])
         report_prompt = f"""
         ## Role: AI Interview Coach
         ## Task: Provide a final debrief for a 4-question managerial interview.
@@ -730,7 +730,7 @@ def get_hr_response(conversation_history, user_answer, expression_data_json, aud
     if history and history[-1].get('role') == 'system':
         custom_prompt = history.pop()['content']
         
-    question_count = len([msg for msg in history if msg['role'] == 'ai'])
+    question_count = len([msg for msg in history if msg['role'] == 'model'])
     transcribed_text = user_answer
     session_complete = False
     final_report = None
@@ -756,7 +756,7 @@ def get_hr_response(conversation_history, user_answer, expression_data_json, aud
         ai_response = "This concludes the HR interview. Generating your final debrief..."
         
         # Create the report prompt
-        history_text = "\n".join([f"{msg['role']}: {msg['content']}" for msg in history])
+        history_text = "\n".join([f"{msg['role']}: {msg['parts'][0]['text']}" for msg in history if 'parts' in msg])
         report_prompt = f"""
         ## Role: AI Interview Coach
         ## Task: Provide a final debrief for a 4-question HR interview.
@@ -821,7 +821,7 @@ def get_resume_response(resume_text, conversation_history, user_answer, expressi
     if history and history[-1].get('role') == 'system':
         custom_prompt = history.pop()['content']
         
-    question_count = len([msg for msg in history if msg['role'] == 'ai'])
+    question_count = len([msg for msg in history if msg['role'] == 'model'])
     
     transcribed_text = user_answer
     session_complete = False
@@ -855,7 +855,7 @@ def get_resume_response(resume_text, conversation_history, user_answer, expressi
         ai_response = "This concludes the Resume-Based interview. Generating your final debrief..."
         
         # Create the report prompt
-        history_text = "\n".join([f"{msg['role']}: {msg['content']}" for msg in history])
+        history_text = "\n".join([f"{msg['role']}: {msg['parts'][0]['text']}" for msg in history if 'parts' in msg])
         report_prompt = f"""
         ## Role: AI Interview Coach
         ## Task: Provide a final debrief for a 6-question resume-based interview.
@@ -953,5 +953,3 @@ def get_final_report(all_round_results):
         return "Error: The AI Career Architect could not generate the final report."
         
     return response.text
-
-# ⭐️ --- FIX: REMOVED THE STRAY '}' SYNTAX ERROR --- ⭐️
