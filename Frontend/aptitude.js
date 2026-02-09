@@ -101,10 +101,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function fetchQuestion() {
         if (isFetching) return null; 
-        isFetching = true;
+        isFetching = true;      
         
         try {
-            const response = await fetch("https://prepmate-backend-x77z.onrender.com/aptitude-question", {
+            const response = await fetch("https://prepmateai-project-production.up.railway.app/aptitude-question", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ topic: selectedTopic }),
@@ -386,7 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Ensure other cards start with their default placeholder text (which is in the HTML template now)
         
         try {
-            const resp = await fetch("https://prepmate-backend-x77z.onrender.com/aptitude-feedback", {
+            const resp = await fetch("https://prepmateai-project-production.up.railway.app/aptitude-feedback", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ results: practiceResults }),

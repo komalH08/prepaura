@@ -119,7 +119,7 @@ function initializeApp() {
       formData.append("resume_file", file);
 
       try {
-          const response = await fetch("https://prepmate-backend-x77z.onrender.com/upload-practice-resume", {
+          const response = await fetch("https://prepmateai-project-production.up.railway.app/upload-practice-resume", {
               method: "POST",
               body: formData,
           });
@@ -281,7 +281,7 @@ function initializeApp() {
       }
 
       try {
-        const response = await fetch("https://prepmate-backend-x77z.onrender.com/resume-conversation", {
+        const response = await fetch("https://prepmateai-project-production.up.railway.app/resume-conversation", {
           method: "POST",
           body: formData, 
         });
