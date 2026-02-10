@@ -36,7 +36,7 @@ CORS(app,
      origins=[
          "http://localhost:8000",
          "https://prepmateai-project.vercel.app",
-         "https://prepmate-backend-bpfn.onrender.com"
+         "https://prepmate-backend-bpfn.onrender.com",
          "https://prepmateai-project-production.up.railway.app"
      ],
      allow_headers=["Content-Type", "Authorization"],
