@@ -418,6 +418,7 @@ def managerial_conversation():
     
     user_answer_text = None
     audio_file_path = None
+    duration_seconds = 0
 
     if audio_file:
         try:
@@ -459,7 +460,8 @@ def hr_conversation():
     
     user_answer_text = None
     audio_file_path = None
-
+    duration_seconds = 0
+    
     if audio_file:
         try:
             filename = f"temp_hr_audio_{int(time.time())}.webm"
@@ -525,6 +527,7 @@ def resume_conversation():
     
     user_answer_text = None
     audio_file_path = None
+    duration_seconds = 0
 
     if audio_file:
         try:
